@@ -1,0 +1,9 @@
+{
+  "name": "cloudforge",
+  "version": "1.0.0",
+  "description": "Cloud Forge — 3D CAD with built-in print-and-ship checkout",
+  "private": true,
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}

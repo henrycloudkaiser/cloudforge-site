@@ -52,10 +52,6 @@
 
   body {
     font-family: var(--font);
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.6) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 100%, rgba(212,169,58,0.10) 0%, transparent 50%),
-      var(--ink);
     color: var(--sail);
     height: 100vh;
     display: flex;
@@ -67,7 +63,9 @@
   /* ── Top Bar ── */
   #topbar {
     height: 56px;
-    background: linear-gradient(180deg, var(--deep) 0%, rgba(230,240,248,0.95) 100%);
+    background: rgba(215, 232, 245, 0.24);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--rope);
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -82,47 +80,42 @@
   #topbar-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     justify-self: start;
+    height: 100%;
   }
 
   /* Right cluster (mode + export) */
   #topbar-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     justify-self: end;
+    height: 100%;
   }
 
-  /* Centered cloud logo — the unique signature of the page */
+  /* Centered logo — cloud icon with gear peeking out + wordmark beside it */
   #cloud-logo {
-    position: relative;
-    width: 200px;
-    height: 70px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    margin-top: 14px; /* lets the cloud overhang the bar slightly */
-  }
-
-  #cloud-logo svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
+    gap: 9px;
     height: 100%;
-    filter: drop-shadow(0 4px 14px rgba(31,56,80,0.18));
+    pointer-events: none;
+    user-select: none;
   }
-
+  #cloud-logo .logo-icon {
+    width: 44px;
+    height: 28px;
+    filter: drop-shadow(0 2px 5px rgba(31,56,80,0.22));
+    flex-shrink: 0;
+  }
   #cloud-logo-text {
-    position: relative;
     font-family: var(--display);
     font-weight: 600;
-    font-size: 22px;
-    letter-spacing: -0.5px;
-    color: var(--on-brass);
-    z-index: 2;
-    margin-top: -4px; /* visual centering inside the cloud */
+    font-size: 20px;
+    letter-spacing: -0.3px;
+    color: var(--sail);
+    line-height: 1;
   }
   #cloud-logo-text em {
     font-style: italic;
@@ -130,40 +123,183 @@
     color: var(--coral-2);
   }
 
-  .top-divider { width: 1px; height: 22px; background: var(--rope); }
+  .top-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--rope);
+    opacity: 0.6;
+    margin: 0 2px;
+    flex-shrink: 0;
+  }
 
   .top-btn {
-    height: 32px;
-    padding: 0 13px;
+    height: 30px;
+    padding: 0 10px;
     border-radius: 4px;
     border: 1px solid var(--rope);
     background: transparent;
     color: var(--sail);
     font-family: var(--font);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 500;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 5px;
     transition: background 0.15s, border-color 0.15s, color 0.15s;
     white-space: nowrap;
+    line-height: 1;
+    flex-shrink: 0;
   }
   .top-btn:hover { background: var(--hull); border-color: var(--rope-2); color: var(--sail); }
   .top-btn.danger { color: var(--coral); border-color: rgba(217,106,85,0.4); }
   .top-btn.danger:hover { background: rgba(217,106,85,0.12); border-color: var(--coral); }
   .top-btn.accent { background: var(--brass); border-color: var(--brass-2); color: var(--on-brass); font-weight: 600; }
   .top-btn.accent:hover { background: var(--brass-2); border-color: var(--brass-2); color: var(--on-brass); }
+  .top-btn.order-btn { background: #2d8a4e; border-color: #236b3c; color: #fff; font-weight: 600; }
+  .top-btn.order-btn:hover { background: #236b3c; border-color: #1a5230; color: #fff; }
+
+  #btn-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    opacity: 0.9;
+    transition: opacity 0.15s, transform 0.15s;
+    flex-shrink: 0;
+    height: 30px;
+    margin-right: 2px;
+  }
+  #btn-home svg { width: 42px; height: 26px; display: block; }
+  #btn-home:hover { opacity: 1; transform: scale(1.06); }
 
   #mode-label {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     color: var(--brass);
     letter-spacing: 1.5px;
-    padding: 4px 8px;
+    padding: 0 8px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
     border: 1px solid rgba(212,169,58,0.4);
     border-radius: 3px;
     background: rgba(212,169,58,0.08);
+    flex-shrink: 0;
+  }
+
+  /* ── Horizontal Tool Toolbar (sits below #topbar) ── */
+  #tool-toolbar {
+    height: 44px;
+    background: rgba(215, 232, 245, 0.24);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rope);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 6px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 9;
+    pointer-events: auto;
+  }
+  .tt-group { display: flex; align-items: center; gap: 4px; }
+  .tt-div   { width: 1px; height: 22px; background: var(--rope); margin: 0 6px; opacity: 0.6; }
+  .icon-tool {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    border: 1px solid var(--rope);
+    background: rgba(255,255,255,0.55);
+    color: var(--sail);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s, border-color 0.12s, transform 0.08s;
+    position: relative;
+  }
+  .icon-tool:hover {
+    background: var(--hull-2);
+    border-color: var(--sky);
+    transform: translateY(-1px);
+  }
+  .icon-tool.active {
+    background: rgba(58,126,176,0.22);
+    border-color: var(--sky);
+    color: var(--sky-2);
+  }
+  /* Tooltip via data-tip */
+  .icon-tool[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(31,56,80,0.95);
+    color: #f0e9d8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── Floating Properties Dropdown (top-left of viewport, TinkerCad style) ── */
+  #prop-dropdown {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 232px;
+    background: rgba(215, 232, 245, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--rope);
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(31,56,80,0.18);
+    z-index: 8;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+  #prop-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(212,169,58,0.18);
+    border-bottom: 1px solid var(--rope);
+    cursor: pointer;
+    user-select: none;
+  }
+  #prop-dropdown-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--brass-2);
+  }
+  #prop-dropdown-chev {
+    font-size: 11px;
+    color: var(--brass-2);
+    transition: transform 0.15s;
+  }
+  #prop-dropdown.collapsed #prop-dropdown-chev { transform: rotate(-90deg); }
+  #prop-dropdown-body {
+    padding: 10px 12px 12px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    transition: max-height 0.2s ease, padding 0.2s ease;
+  }
+  #prop-dropdown.collapsed #prop-dropdown-body {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   /* ── Main layout ── */
@@ -177,12 +313,17 @@
   /* ── Left Sidebar ── */
   #sidebar-left {
     width: 172px;
-    background: var(--deep);
+    background: rgba(215, 232, 245, 0.24);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-right: 1px solid var(--rope);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     overflow-y: auto;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
   }
 
   .sidebar-section {
@@ -225,7 +366,18 @@
   .shape-btn:hover { background: var(--hull-2); border-color: var(--sky); transform: translateY(-1px); }
   .shape-btn:active { transform: translateY(0); }
 
-  .shape-icon { font-size: 20px; line-height: 1; }
+  /* SVG-based shape icons — uniform line style across the library */
+  .shape-icon {
+    width: 24px;
+    height: 24px;
+    stroke: var(--sail);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    fill: none;
+    flex-shrink: 0;
+  }
+  .shape-btn:hover .shape-icon { stroke: var(--sky-2); }
 
   /* ── Tool panel ── */
   .tool-btn {
@@ -250,22 +402,46 @@
   .tool-btn.active { border-color: var(--sky); color: var(--sky-2); background: rgba(58,126,176,0.14); }
 
   /* ── Viewport ── */
+  /* The 3D canvas is pulled out to fill the entire window as a background
+     layer. The viewport div itself stays in the flex layout to define where
+     UI overlays (gizmo, axes, etc.) appear, but is pointer-events-transparent
+     so clicks in its area fall through to the canvas behind it. */
   #viewport {
     flex: 1;
     position: relative;
-    overflow: hidden;
-    background: var(--ink);
+    overflow: visible;
+    pointer-events: none;
   }
 
-  #viewport canvas { display: block; }
+  /* Only the Three.js renderer canvas (a direct child of #viewport) fills the
+     window — NOT the nested dodec-canvas inside #view-cube. */
+  #viewport > canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 0;
+    pointer-events: auto;
+  }
 
-  /* Top-left mode badge (workplane / ruler) */
+  /* Re-enable mouse for the interactive gizmo (which lives inside viewport) */
+  #view-cube, #dodec-canvas { pointer-events: auto; }
+
+  /* Make sure body/html don't show a background behind the canvas */
+  html, body { background: transparent; }
+
+  /* Top-CENTER mode badge (workplane / ruler) — moved out of the way of the
+     prop-dropdown which now occupies the top-left. */
   #viewport-overlay {
     position: absolute;
     top: 12px;
-    left: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 6px;
     pointer-events: none;
   }
@@ -317,7 +493,9 @@
   /* ── Bottom bar — view + snap + hints ── */
   #bottom-bar {
     height: 36px;
-    background: var(--deep);
+    background: rgba(215, 232, 245, 0.24);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-top: 1px solid var(--rope);
     display: flex;
     align-items: center;
@@ -326,6 +504,9 @@
     flex-shrink: 0;
     font-size: 12px;
     color: var(--mist);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
   }
   #bottom-bar .seg {
     display: flex;
@@ -351,12 +532,17 @@
   /* ── Right Sidebar ── */
   #sidebar-right {
     width: 196px;
-    background: var(--deep);
+    background: rgba(215, 232, 245, 0.24);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-left: 1px solid var(--rope);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
     overflow-y: auto;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
   }
 
   .prop-row {
@@ -520,6 +706,7 @@
     position: fixed;
     bottom: 50px;
     right: 24px;
+    transform: translateY(8px);
     background: var(--brass);
     color: var(--on-brass);
     font-size: 13px;
@@ -546,41 +733,31 @@
     top: 12px;
     right: 12px;
     width: 110px;
-    height: 110px;
     pointer-events: auto;
     z-index: 5;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
   }
-  .vc-grid {
-    display: grid;
-    grid-template-columns: 32px 32px 32px;
-    grid-template-rows: 32px 32px 32px;
-    gap: 3px;
-    padding: 6px;
-    background: rgba(255,255,255,0.85);
-    border: 1px solid var(--rope);
-    border-radius: 6px;
-    backdrop-filter: blur(6px);
+  #dodec-canvas {
+    width: 110px;
+    height: 110px;
+    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
   }
-  .vc-btn {
-    background: var(--hull);
-    border: 1px solid var(--rope);
-    border-radius: 3px;
-    color: var(--sail);
+  #dodec-label {
     font-family: var(--mono);
     font-size: 9px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--brass);
+    text-align: center;
+    height: 14px;
+    text-shadow: 0 0 6px rgba(255,255,255,0.8);
   }
-  .vc-btn:hover { background: rgba(58,126,176,0.18); border-color: var(--sky); color: var(--sky-2); }
-  .vc-btn.home { background: rgba(212,169,58,0.14); border-color: rgba(212,169,58,0.45); color: var(--brass); }
-  .vc-empty { visibility: hidden; }
 
   /* ── Snap dropdown ── */
   .snap-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--mist); }
@@ -627,29 +804,39 @@
   .action-btn.tool-mode.active { border-color: var(--brass); color: var(--brass); background: rgba(212,169,58,0.1); }
 
   /* ── Hole-state toggle row ── */
-  .hole-toggle {
+  /* Two side-by-side type buttons (Solid / Negative) — replace the old toggle */
+  .type-buttons {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .type-btn {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 4px;
-    padding: 6px 8px;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 4px;
     background: var(--hull);
     border: 1px solid var(--rope);
     border-radius: 4px;
     cursor: pointer;
     font-size: 11px;
-    transition: border-color 0.12s;
     color: var(--sail);
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    font-family: var(--font);
+    font-weight: 500;
   }
-  .hole-toggle:hover { border-color: var(--rope-2); }
-  .hole-toggle.is-hole { border-color: var(--brass); color: var(--brass); background: rgba(212,169,58,0.1); }
+  .type-btn:hover { border-color: var(--rope-2); background: var(--hull-2); }
+  .type-btn.active.solid-btn  { border-color: var(--sky);   background: rgba(58,126,176,0.18); color: var(--sky-2); }
+  .type-btn.active.hole-btn   { border-color: var(--brass); background: rgba(212,169,58,0.18); color: var(--brass-2); }
 
   /* ── Selection count badge in objects sidebar ── */
   .obj-item.multi { background: rgba(212,169,58,0.1); border-color: rgba(212,169,58,0.3); color: var(--brass); }
 
   /* ── Ruler readout ── */
   #ruler-readout {
-    position: absolute;
+    position: fixed;
     background: rgba(255,255,255,0.95);
     border: 1px solid var(--brass);
     border-radius: 4px;
@@ -736,7 +923,7 @@
 
   /* ── Marquee selection rubber-band ── */
   #marquee {
-    position: absolute;
+    position: fixed;
     border: 1px dashed var(--brass);
     background: rgba(212,169,58,0.10);
     pointer-events: none;
@@ -778,7 +965,7 @@
 
   /* ── Dimension labels (HTML overlays for the 3D bbox frame) ── */
   .dim-label {
-    position: absolute;
+    position: fixed;
     background: rgba(255,255,255,0.94);
     border: 1px solid var(--sky);
     color: var(--sky-2);
@@ -807,7 +994,7 @@
 
   /* ── Rotation angle readout (during rotation drag) ── */
   #angle-readout {
-    position: absolute;
+    position: fixed;
     background: rgba(255,255,255,0.96);
     border: 2px solid var(--brass);
     border-radius: 6px;
@@ -828,6 +1015,149 @@
     margin-right: 6px;
     opacity: 0.7;
   }
+
+  /* ── Order Checkout Modal ─────────────────────────────────────────────── */
+  #order-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 56, 80, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+  }
+  #order-modal.show { display: flex; }
+  #order-modal-card {
+    position: relative;
+    background: rgba(247, 251, 254, 0.98);
+    border: 1px solid var(--rope);
+    border-radius: 10px;
+    width: 400px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    padding: 22px 24px 20px;
+    box-shadow: 0 16px 60px rgba(31,56,80,0.4);
+    pointer-events: auto;
+  }
+  #om-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--mist);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  #om-close:hover { background: var(--hull); color: var(--sail); }
+  #order-modal h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--sail);
+    margin-bottom: 2px;
+    letter-spacing: -0.3px;
+  }
+  .om-subtitle {
+    font-size: 11.5px;
+    color: var(--mist);
+    margin-bottom: 16px;
+    font-family: var(--mono);
+    letter-spacing: 0.3px;
+  }
+  .om-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px dashed rgba(212,169,58,0.35);
+    font-size: 13px;
+    color: var(--sail);
+  }
+  .om-row:last-of-type { border-bottom: none; }
+  .om-row .label { color: var(--mist); font-size: 12px; }
+  .om-row .value { font-family: var(--mono); color: var(--sail); }
+  .om-row.total { padding-top: 10px; }
+  .om-row.total .label { color: var(--sail); font-weight: 500; font-size: 13px; }
+  .om-divider {
+    height: 1px;
+    background: var(--rope);
+    opacity: 0.5;
+    margin: 12px 0 4px;
+  }
+  .om-label {
+    display: block;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--mist);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 14px;
+    margin-bottom: 4px;
+  }
+  .om-input,
+  .om-select {
+    width: 100%;
+    height: 34px;
+    background: var(--ink);
+    border: 1px solid var(--rope);
+    border-radius: 4px;
+    padding: 0 10px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--sail);
+    outline: none;
+    transition: border-color 0.12s;
+  }
+  .om-input:focus, .om-select:focus { border-color: var(--sky); }
+  .om-price {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--sky-2);
+  }
+  .om-note {
+    font-size: 11px;
+    color: var(--mist);
+    font-style: italic;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .om-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .om-btn {
+    flex: 1;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid var(--rope);
+    background: transparent;
+    color: var(--sail);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .om-btn:hover:not(:disabled) { background: var(--hull); border-color: var(--rope-2); }
+  .om-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .om-btn.primary {
+    background: #2d8a4e;
+    border-color: #236b3c;
+    color: #fff;
+    font-weight: 600;
+    flex: 1.4;
+  }
+  .om-btn.primary:hover:not(:disabled) { background: #236b3c; color: #fff; }
 </style>
 </head>
 <body>
@@ -835,41 +1165,58 @@
 <!-- ── Top Bar with centered cloud logo ── -->
 <div id="topbar">
   <div id="topbar-left">
+    <a id="btn-home" href="index.html" title="Home" aria-label="Home">
+      <svg viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg-cl" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#d8e2ed"/>
+          </linearGradient>
+          <linearGradient id="hg-gr" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f4c958"/>
+            <stop offset="100%" stop-color="#c89028"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(47, 11)">
+          <path d="M 6.5 0 L 4.62 1.91 L 4.6 4.6 L 1.91 4.62 L 0 6.5 L -1.91 4.62 L -4.6 4.6 L -4.62 1.91 L -6.5 0 L -4.62 -1.91 L -4.6 -4.6 L -1.91 -4.62 L 0 -6.5 L 1.91 -4.62 L 4.6 -4.6 L 4.62 -1.91 Z"
+                fill="url(#hg-gr)" stroke="#8a6a1d" stroke-width="0.8" stroke-linejoin="round"/>
+          <circle r="2.4" fill="none" stroke="#8a6a1d" stroke-width="1.1"/>
+        </g>
+        <path d="M 12 33 C 2 33, 1 22, 10 21 C 8 13, 22 9, 28 16 C 30 9, 42 11, 43 16 C 52 17, 57 33, 48 33 Z"
+              fill="url(#hg-cl)" stroke="#9caab9" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="top-divider"></div>
     <button class="top-btn" id="btn-undo" title="Undo (Ctrl+Z)">↩ Undo</button>
-    <button class="top-btn" id="btn-duplicate" title="Duplicate (Ctrl+D)">⎘ Duplicate</button>
-    <button class="top-btn danger" id="btn-delete" title="Delete selected (Del)">✕ Delete</button>
+    <button class="top-btn" id="btn-duplicate" title="Duplicate (Ctrl+D)">⎘ Dup</button>
+    <button class="top-btn danger" id="btn-delete" title="Delete selected (Del)">✕ Del</button>
     <div class="top-divider"></div>
     <button class="top-btn" id="btn-reset-cam" title="Reset camera">⊙ Reset</button>
     <button class="top-btn" id="btn-fit-view" title="Fit selection or all (F)">⊡ Fit</button>
+    <button class="top-btn" id="btn-drop-floor" title="Drop selected to the plane">⤓ Drop</button>
   </div>
 
   <div id="cloud-logo" aria-label="Cloud Forge">
-    <svg viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo-icon" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="cloud-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f4e4c0"/>
-          <stop offset="100%" stop-color="#d6c499"/>
+        <linearGradient id="cl-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#d8e2ed"/>
+        </linearGradient>
+        <linearGradient id="gr-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f4c958"/>
+          <stop offset="100%" stop-color="#c89028"/>
         </linearGradient>
       </defs>
-      <!-- Hand-drawn cloud silhouette built from overlapping arcs -->
-      <path d="M 24 44
-               C 14 44, 10 30, 22 26
-               C 22 14, 38 10, 46 18
-               C 52 8, 70 8, 76 18
-               C 86 10, 102 14, 104 24
-               C 116 16, 138 18, 140 30
-               C 154 26, 168 32, 168 42
-               C 184 42, 184 58, 168 58
-               L 28 58
-               C 14 58, 10 50, 24 44 Z"
-            fill="url(#cloud-gradient)"
-            stroke="#d4a93a"
-            stroke-width="1.5"/>
-      <!-- subtle interior shading -->
-      <path d="M 26 50 Q 60 46, 100 49 T 168 50"
-            fill="none"
-            stroke="rgba(184,144,42,0.35)"
-            stroke-width="1"/>
+      <!-- Gear "sun" peeking out upper-right; drawn first so cloud overlays it -->
+      <g transform="translate(47, 11)">
+        <path d="M 6.5 0 L 4.62 1.91 L 4.6 4.6 L 1.91 4.62 L 0 6.5 L -1.91 4.62 L -4.6 4.6 L -4.62 1.91 L -6.5 0 L -4.62 -1.91 L -4.6 -4.6 L -1.91 -4.62 L 0 -6.5 L 1.91 -4.62 L 4.6 -4.6 L 4.62 -1.91 Z"
+              fill="url(#gr-grad)" stroke="#8a6a1d" stroke-width="0.8" stroke-linejoin="round"/>
+        <circle r="2.4" fill="none" stroke="#8a6a1d" stroke-width="1.1"/>
+      </g>
+      <!-- Cloud in front, partially covering gear's lower-left -->
+      <path d="M 12 33 C 2 33, 1 22, 10 21 C 8 13, 22 9, 28 16 C 30 9, 42 11, 43 16 C 52 17, 57 33, 48 33 Z"
+            fill="url(#cl-grad)" stroke="#9caab9" stroke-width="1.2" stroke-linejoin="round"/>
     </svg>
     <div id="cloud-logo-text">Cloud<em>Forge</em></div>
   </div>
@@ -878,92 +1225,40 @@
     <button class="top-btn" id="btn-import" title="Import STL/OBJ">⬆ Import</button>
     <span id="mode-label">SELECT</span>
     <button class="top-btn accent" id="btn-export">⬇ Export STL</button>
+    <button class="top-btn order-btn" id="btn-order" title="Order a print of your design">🛒 Order</button>
   </div>
 </div>
 <input id="file-input" type="file" accept=".stl,.obj">
 
+<!-- ── Horizontal Tool Toolbar (TinkerCad-style: all tools at top, icons + tooltip) ── -->
+<div id="tool-toolbar">
+  <div class="tt-group" title="Transform tools">
+    <button class="icon-tool active" id="tool-select" data-tip="Select / Move (V)" aria-label="Select">↖</button>
+    <button class="icon-tool" id="tool-rotate" data-tip="Rotate (R)" aria-label="Rotate">↻</button>
+    <button class="icon-tool" id="tool-scale" data-tip="Scale (S)" aria-label="Scale">⤢</button>
+  </div>
+  <div class="tt-div"></div>
+  <div class="tt-group" title="Boolean operations">
+    <button class="icon-tool" id="btn-group" data-tip="Group / Union (Ctrl+G)" aria-label="Group">⊕</button>
+    <button class="icon-tool" id="btn-ungroup" data-tip="Ungroup (Ctrl+Shift+G)" aria-label="Ungroup">⊖</button>
+  </div>
+  <div class="tt-div"></div>
+  <div class="tt-group" title="Mirror">
+    <button class="icon-tool" data-mirror="x" data-tip="Mirror X" aria-label="Mirror X">⇆</button>
+    <button class="icon-tool" data-mirror="y" data-tip="Mirror Y" aria-label="Mirror Y">⇅</button>
+    <button class="icon-tool" data-mirror="z" data-tip="Mirror Z" aria-label="Mirror Z">⇋</button>
+  </div>
+  <div class="tt-div"></div>
+  <div class="tt-group" title="Construction tools">
+    <button class="icon-tool" id="tool-workplane" data-tip="Workplane Tool (W)" aria-label="Workplane">▥</button>
+    <button class="icon-tool" id="tool-ruler" data-tip="Ruler Tool (M)" aria-label="Ruler">📏</button>
+    <button class="icon-tool" id="btn-clear-workplane" data-tip="Reset Workplane" aria-label="Reset workplane">⌂</button>
+  </div>
+</div>
+
 
 <!-- ── Main ── -->
 <div id="main">
-
-  <!-- Left Sidebar -->
-  <div id="sidebar-left">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Add Shape</div>
-      <div class="shape-grid">
-        <button class="shape-btn" data-shape="box">
-          <span class="shape-icon">⬛</span> Box
-        </button>
-        <button class="shape-btn" data-shape="sphere">
-          <span class="shape-icon">⚪</span> Sphere
-        </button>
-        <button class="shape-btn" data-shape="cylinder">
-          <span class="shape-icon">🥫</span> Cylinder
-        </button>
-        <button class="shape-btn" data-shape="cone">
-          <span class="shape-icon">🔺</span> Cone
-        </button>
-        <button class="shape-btn" data-shape="pyramid">
-          <span class="shape-icon">▲</span> Pyramid
-        </button>
-        <button class="shape-btn" data-shape="torus">
-          <span class="shape-icon">⭕</span> Torus
-        </button>
-        <button class="shape-btn" data-shape="wedge">
-          <span class="shape-icon">📐</span> Wedge
-        </button>
-        <button class="shape-btn" data-shape="text">
-          <span class="shape-icon">A</span> Text
-        </button>
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Transform</div>
-      <button class="tool-btn active" id="tool-select">
-        ↖ Select / Move
-      </button>
-      <button class="tool-btn" id="tool-rotate">
-        ↻ Rotate
-      </button>
-      <button class="tool-btn" id="tool-scale">
-        ⤢ Scale
-      </button>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Boolean</div>
-      <div class="action-grid">
-        <button class="action-btn" id="btn-group" title="Group / Union (Ctrl+G)">⊕ Group</button>
-        <button class="action-btn" id="btn-ungroup" title="Ungroup (Ctrl+Shift+G)">⊖ Ungroup</button>
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Mirror Selected</div>
-      <div class="action-grid">
-        <button class="action-btn" data-mirror="x">⇆ Mirror X</button>
-        <button class="action-btn" data-mirror="y">⇅ Mirror Y</button>
-        <button class="action-btn" data-mirror="z">⇋ Mirror Z</button>
-        <button class="action-btn" id="btn-clear-workplane" title="Reset workplane">⌂ Reset WP</button>
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Construction</div>
-      <button class="tool-btn" id="tool-workplane" title="Click a face to set the workplane (W)">
-        ▥ Workplane Tool
-      </button>
-      <button class="tool-btn" id="tool-ruler" title="Click two points to measure (M)">
-        📏 Ruler Tool
-      </button>
-    </div>
-
-    <div class="sidebar-section" style="flex:1">
-      <div class="sidebar-label">Objects (<span id="obj-count">0</span>)</div>
-      <div id="obj-list"></div>
-    </div>
-  </div>
 
 
   <!-- Viewport -->
@@ -975,19 +1270,10 @@
     <!-- Top-right: live dimensions and coordinates of the selected object -->
     <div id="vp-readout"></div>
 
-    <!-- View Cube -->
+    <!-- Dodecahedron orientation gizmo -->
     <div id="view-cube">
-      <div class="vc-grid">
-        <div class="vc-empty"></div>
-        <button class="vc-btn" data-view="top">Top</button>
-        <div class="vc-empty"></div>
-        <button class="vc-btn" data-view="left">Left</button>
-        <button class="vc-btn home" data-view="home" title="Isometric home">⌂</button>
-        <button class="vc-btn" data-view="right">Right</button>
-        <button class="vc-btn" data-view="front">Front</button>
-        <button class="vc-btn" data-view="bottom">Btm</button>
-        <button class="vc-btn" data-view="back">Back</button>
-      </div>
+      <canvas id="dodec-canvas" width="110" height="110" title="Click a face to snap view · Drag to orbit"></canvas>
+      <div id="dodec-label"></div>
     </div>
 
     <canvas id="axes-canvas"></canvas>
@@ -1000,88 +1286,172 @@
       <span>Loading sky</span>
       <span class="pct">0%</span>
     </div>
+
+    <!-- ── Floating Properties Dropdown (TinkerCad-style Inspector) ── -->
+    <div id="prop-dropdown" style="display:none">
+      <div id="prop-dropdown-header">
+        <span id="prop-dropdown-title">Inspector</span>
+        <span id="prop-dropdown-chev">▾</span>
+      </div>
+      <div id="prop-dropdown-body">
+        <div id="no-selection">Select a shape to inspect</div>
+        <div id="props-panel" style="display:none">
+          <div class="type-buttons" id="type-buttons">
+            <button class="type-btn solid-btn active" data-type="solid" title="Solid: contributes mass to a Group">
+              <span>⬤</span> Solid
+            </button>
+            <button class="type-btn hole-btn" data-type="hole" title="Negative: subtracts from solids in a Group">
+              <span>◎</span> Negative
+            </button>
+          </div>
+
+          <div class="prop-section collapsed">
+            <div class="prop-group-label collapsible" data-target="grp-position">
+              <span class="chev">▸</span> Position (mm)
+            </div>
+            <div class="prop-section-body" id="grp-position">
+              <div class="prop-row">
+                <span class="prop-label">X</span>
+                <input class="prop-input" id="prop-x" type="number" step="0.5">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">Y</span>
+                <input class="prop-input" id="prop-y" type="number" step="0.5">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">Z</span>
+                <input class="prop-input" id="prop-z" type="number" step="0.5">
+              </div>
+            </div>
+          </div>
+
+          <div class="prop-section collapsed">
+            <div class="prop-group-label collapsible" data-target="grp-scale">
+              <span class="chev">▸</span> Size (mm)
+            </div>
+            <div class="prop-section-body" id="grp-scale">
+              <div class="prop-row">
+                <span class="prop-label">W</span>
+                <input class="prop-input" id="prop-sx" type="number" step="0.5" min="0.01">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">H</span>
+                <input class="prop-input" id="prop-sy" type="number" step="0.5" min="0.01">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">D</span>
+                <input class="prop-input" id="prop-sz" type="number" step="0.5" min="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="prop-section collapsed">
+            <div class="prop-group-label collapsible" data-target="grp-rotation">
+              <span class="chev">▸</span> Rotation (°)
+            </div>
+            <div class="prop-section-body" id="grp-rotation">
+              <div class="prop-row">
+                <span class="prop-label">X</span>
+                <input class="prop-input" id="prop-rx" type="number" step="1">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">Y</span>
+                <input class="prop-input" id="prop-ry" type="number" step="1">
+              </div>
+              <div class="prop-row">
+                <span class="prop-label">Z</span>
+                <input class="prop-input" id="prop-rz" type="number" step="1">
+              </div>
+            </div>
+          </div>
+
+          <div class="prop-group-label" style="margin-top:10px">Shape</div>
+          <div id="shape-inspector">
+            <div style="font-size:11px;color:var(--muted);font-style:italic">No tunable params for this shape.</div>
+          </div>
+
+          <div class="prop-group-label" style="margin-top:10px">Color</div>
+          <div class="color-grid" id="color-grid"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Right Sidebar -->
+  <!-- Right Sidebar — Shape Library + Objects -->
   <div id="sidebar-right">
     <div class="sidebar-section">
-      <div class="sidebar-label">Properties</div>
-      <div id="no-selection">Click a shape to see its properties</div>
-      <div id="props-panel" style="display:none">
-        <div class="prop-group-label">State</div>
-        <div class="hole-toggle" id="hole-toggle">
-          <span id="hole-toggle-icon">⬤</span>
-          <span id="hole-toggle-label">Solid</span>
-        </div>
-
-        <div class="prop-section collapsed">
-          <div class="prop-group-label collapsible" data-target="grp-position">
-            <span class="chev">▸</span> Position
-          </div>
-          <div class="prop-section-body" id="grp-position">
-            <div class="prop-row">
-              <span class="prop-label">X</span>
-              <input class="prop-input" id="prop-x" type="number" step="0.1">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">Y</span>
-              <input class="prop-input" id="prop-y" type="number" step="0.1">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">Z</span>
-              <input class="prop-input" id="prop-z" type="number" step="0.1">
-            </div>
-          </div>
-        </div>
-
-        <div class="prop-section collapsed">
-          <div class="prop-group-label collapsible" data-target="grp-scale">
-            <span class="chev">▸</span> Scale
-          </div>
-          <div class="prop-section-body" id="grp-scale">
-            <div class="prop-row">
-              <span class="prop-label">W</span>
-              <input class="prop-input" id="prop-sx" type="number" step="0.1" min="0.01">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">H</span>
-              <input class="prop-input" id="prop-sy" type="number" step="0.1" min="0.01">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">D</span>
-              <input class="prop-input" id="prop-sz" type="number" step="0.1" min="0.01">
-            </div>
-          </div>
-        </div>
-
-        <div class="prop-section collapsed">
-          <div class="prop-group-label collapsible" data-target="grp-rotation">
-            <span class="chev">▸</span> Rotation (°)
-          </div>
-          <div class="prop-section-body" id="grp-rotation">
-            <div class="prop-row">
-              <span class="prop-label">X</span>
-              <input class="prop-input" id="prop-rx" type="number" step="1">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">Y</span>
-              <input class="prop-input" id="prop-ry" type="number" step="1">
-            </div>
-            <div class="prop-row">
-              <span class="prop-label">Z</span>
-              <input class="prop-input" id="prop-rz" type="number" step="1">
-            </div>
-          </div>
-        </div>
-
-        <div class="prop-group-label" style="margin-top:12px">Shape Inspector</div>
-        <div id="shape-inspector">
-          <div style="font-size:11px;color:var(--muted);font-style:italic">No tunable params for this shape.</div>
-        </div>
-
-        <div class="prop-group-label" style="margin-top:12px">Color</div>
-        <div class="color-grid" id="color-grid"></div>
+      <div class="sidebar-label">Shape Library</div>
+      <div class="shape-grid">
+        <button class="shape-btn" data-shape="box">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M3 8 L12 4 L21 8 L21 17 L12 21 L3 17 Z M3 8 L12 12 L21 8 M12 12 L12 21"/></svg>
+          Box
+        </button>
+        <button class="shape-btn" data-shape="sphere">
+          <svg class="shape-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/></svg>
+          Sphere
+        </button>
+        <button class="shape-btn" data-shape="cylinder">
+          <svg class="shape-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="2.2"/><path d="M5 5 V19"/><path d="M19 5 V19"/><path d="M5 19 a7 2.2 0 0 0 14 0"/></svg>
+          Cylinder
+        </button>
+        <button class="shape-btn" data-shape="cone">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L19 19 L5 19 Z"/><ellipse cx="12" cy="19" rx="7" ry="2.2"/></svg>
+          Cone
+        </button>
+        <button class="shape-btn" data-shape="pyramid">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L21 19 L3 19 Z M12 3 L12 19"/></svg>
+          Pyramid
+        </button>
+        <button class="shape-btn" data-shape="torus">
+          <svg class="shape-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><ellipse cx="12" cy="12" rx="3.5" ry="1.5"/></svg>
+          Torus
+        </button>
+        <button class="shape-btn" data-shape="wedge">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M4 19 L20 19 L20 5 Z M4 19 L8 16 M20 19 L18 16 M20 5 L18 8"/></svg>
+          Wedge
+        </button>
+        <button class="shape-btn" data-shape="hemisphere">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M3 17 A9 9 0 0 1 21 17 Z"/><ellipse cx="12" cy="17" rx="9" ry="2.2"/></svg>
+          Dome
+        </button>
+        <button class="shape-btn" data-shape="prism">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 4 L21 19 L3 19 Z M3 19 L6 21 L17 21 L21 19 M12 4 L13.5 6"/></svg>
+          Prism
+        </button>
+        <button class="shape-btn" data-shape="capsule">
+          <svg class="shape-icon" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/></svg>
+          Capsule
+        </button>
+        <button class="shape-btn" data-shape="ring">
+          <svg class="shape-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="5.5"/><ellipse cx="12" cy="12" rx="4" ry="2.2"/></svg>
+          Ring
+        </button>
+        <button class="shape-btn" data-shape="tetrahedron">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L20 19 L4 19 Z M4 19 L12 11 L20 19 M12 3 L12 11"/></svg>
+          Tetra
+        </button>
+        <button class="shape-btn" data-shape="octahedron">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L21 12 L12 21 L3 12 Z M3 12 L21 12 M12 3 L12 21"/></svg>
+          Octa
+        </button>
+        <button class="shape-btn" data-shape="icosahedron">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L20 8 L20 16 L12 21 L4 16 L4 8 Z M4 8 L20 16 M20 8 L4 16 M12 3 L12 21"/></svg>
+          Icosa
+        </button>
+        <button class="shape-btn" data-shape="star">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M12 3 L14.3 9.2 L21 9.7 L15.8 13.7 L17.7 20 L12 16.4 L6.3 20 L8.2 13.7 L3 9.7 L9.7 9.2 Z"/></svg>
+          Star
+        </button>
+        <button class="shape-btn" data-shape="text">
+          <svg class="shape-icon" viewBox="0 0 24 24"><path d="M4 21 L10 4 L14 4 L20 21 M7 15 L17 15"/></svg>
+          Text
+        </button>
       </div>
+    </div>
+
+    <div class="sidebar-section" style="flex:1">
+      <div class="sidebar-label">Objects (<span id="obj-count">0</span>)</div>
+      <div id="obj-list"></div>
     </div>
   </div>
 
@@ -1109,7 +1479,7 @@
   </div>
   <div class="divider"></div>
   <div class="seg hint">
-    <kbd>Click</kbd> select · <kbd>Drag</kbd> X/Z · <kbd>↑ arrow</kbd> Y · <kbd>Shift+Click</kbd> multi
+    <kbd>L-Click</kbd> select/move · <kbd>Shift+Click</kbd> multi · <kbd>↑↓</kbd> Y · <kbd>R-Drag</kbd> orbit
   </div>
   <div class="spacer"></div>
   <div class="seg hint">
@@ -1119,12 +1489,47 @@
 
 <div id="toast"></div>
 
+<!-- ── Order checkout modal ── -->
+<div id="order-modal">
+  <div id="order-modal-card">
+    <button id="om-close" aria-label="Close">✕</button>
+    <h2>Order Print</h2>
+    <div class="om-subtitle">Made and shipped to your door · 7–10 business days</div>
+
+    <div class="om-row"><span class="label">Size</span><span class="value" id="om-size">—</span></div>
+    <div class="om-row"><span class="label">Volume</span><span class="value" id="om-volume">—</span></div>
+    <div class="om-row"><span class="label">Est. weight (PLA)</span><span class="value" id="om-weight">—</span></div>
+
+    <label class="om-label">Material</label>
+    <select class="om-select" id="om-material">
+      <option value="pla">PLA — standard, lowest cost</option>
+      <option value="petg">PETG — tougher, water-resistant</option>
+      <option value="abs">ABS — heat-resistant</option>
+    </select>
+
+    <label class="om-label">Email for order updates</label>
+    <input class="om-input" id="om-email" type="email" placeholder="you@example.com" autocomplete="email">
+
+    <div class="om-divider"></div>
+    <div class="om-row"><span class="label">Print</span><span class="value" id="om-print">$—</span></div>
+    <div class="om-row"><span class="label">Shipping</span><span class="value" id="om-ship">$—</span></div>
+    <div class="om-row total"><span class="label">Total</span><span class="om-price" id="om-price">$—</span></div>
+
+    <div class="om-note">Address &amp; payment collected on the next page (Stripe).</div>
+
+    <div class="om-buttons">
+      <button class="om-btn" id="om-cancel">Cancel</button>
+      <button class="om-btn primary" id="om-order">Continue to payment →</button>
+    </div>
+  </div>
+</div>
+
 <!-- Three.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
 <!-- EXRLoader for the photographic HDRI sky.
      We pull from jsdelivr because cdnjs's r128 distribution doesn't include
      the loaders subfolder. Three.js library version (0.128.0) matches r128. -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/EXRLoader.js" crossorigin="anonymous"></script>
 
 <script>
 // ============================================================================
@@ -1383,6 +1788,14 @@ const COLORS = [
   '#d4a93a', '#b8902a', '#e6c468', '#ecdcb8',
   // Marine supporting tones
   '#6fb39d', '#3a6855', '#2c4a64',
+  // Darker, high-contrast shades — for shapes that need to stand out
+  // against the bright sky background.
+  '#5a1010', '#2a0d05', '#3a1810',   // deep crimson, espresso, dark rust
+  '#0a1830', '#142d4a', '#0d2030',   // midnight, ink blue, abyss
+  '#0d2818', '#1a3525', '#142a1f',   // deep forest, pine, moss-dark
+  '#5a3a0a', '#3a280a', '#2a1a05',   // bronze, walnut, dark cocoa
+  '#2a2a2a', '#1a1a1a', '#0d0d0d',   // charcoal, near-black, true black
+  '#2a0a2a', '#3d1538', '#4a1a3a',   // deep plum, aubergine, wine
 ];
 
 // Build color swatches
@@ -1399,8 +1812,11 @@ COLORS.forEach(c => {
 const viewport = document.getElementById('viewport');
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// Size the renderer to the full window immediately, so the canvas is full-size
+// from the moment it's appended (in case resize() is delayed or errors later).
+renderer.setSize(window.innerWidth, window.innerHeight);
+// Shadows OFF — user requested even/balanced lighting across the plane
+renderer.shadowMap.enabled = false;
 renderer.setClearColor(0xdbeaf3);
 // HDR tone mapping — converts the wide-range EXR luminance into a clean
 // displayable image. ACESFilmic is the photographic-realistic choice.
@@ -1414,16 +1830,20 @@ const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
 camera.position.set(8, 6, 10);
 camera.lookAt(0, 0, 0);
 
-// Lighting
-const ambient = new THREE.AmbientLight(0xffffff, 0.42);
+// Lighting — even, shadow-free illumination across the whole plane.
+// AmbientLight gives base brightness everywhere; a HemisphereLight adds
+// gentle sky-to-ground gradient so curved surfaces still read as 3D.
+// Two directional lights (no shadows) from opposite sides cancel each
+// other's shading bias, leaving the plane uniformly lit.
+const ambient = new THREE.AmbientLight(0xffffff, 0.65);
 scene.add(ambient);
-const dirLight = new THREE.DirectionalLight(0xffe8b8, 0.85); // warm sunset on the water
-dirLight.position.set(10, 20, 10);
-dirLight.castShadow = true;
-dirLight.shadow.mapSize.set(2048, 2048);
+const hemiLight = new THREE.HemisphereLight(0xe8f0fa, 0xc8d4dc, 0.55);
+scene.add(hemiLight);
+const dirLight = new THREE.DirectionalLight(0xfff0d8, 0.55);
+dirLight.position.set(20, 30, 15);
 scene.add(dirLight);
-const fillLight = new THREE.DirectionalLight(0x6ea8d4, 0.32); // cool sea bounce
-fillLight.position.set(-5, 2, -5);
+const fillLight = new THREE.DirectionalLight(0xd8e4f0, 0.55);
+fillLight.position.set(-20, 25, -15);
 scene.add(fillLight);
 
 // ============================================================================
@@ -1638,14 +2058,9 @@ godRays.renderOrder = -988;
 skyGroup.add(godRays);
 godRays.userData.isGodRays = true; // tag so we can slowly rotate it for life
 
-// Align the directional shadow light with the sun
-dirLight.position.copy(sunDir.clone().multiplyScalar(20));
-// Lighting tweaks — warmer key light, cooler fill, brighter ambient for daylight
-ambient.intensity = 0.6;
-dirLight.intensity = 1.1;
-dirLight.color.set(0xfff0c8);   // a touch warmer
-fillLight.color.set(0xa8c8e0);  // soft sky-blue bounce
-fillLight.intensity = 0.45;
+// Lighting balance is set above (shadow-free, even illumination) — don't
+// override it here. The procedural sun direction only affects the visible
+// sky gradient (sunBloom in skyShader), not the scene lights.
 
 // ── 3. Clouds — sculptural cumulus with directional sun lighting ──
 // Each cloud's texture is painted to know where the sun is, with a bright
@@ -1931,8 +2346,27 @@ function updateSky() {
   const pctEl = loaderEl.querySelector('.pct');
   const exrLoader = new THREE.EXRLoader();
   exrLoader.setDataType(THREE.HalfFloatType);
+  // Load order is by SIZE, smallest first. PolyHaven hosts a ~5 MB 1K CC0
+  // sky on a global CDN — usually appears in well under a second. The local
+  // sky.exr is much larger (~70 MB) and is kept only as a fallback in case
+  // the CDN is unreachable. While either loads, the procedural sky is shown.
+  const skyUrls = [
+    'https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/kloppenheim_06_puresky_1k.exr',
+    'sky.exr'
+  ];
+
+  function tryLoadSky(idx) {
+    if (idx >= skyUrls.length) {
+      // All sources failed — keep procedural sky and hide loader
+      loaderEl.innerHTML = '<span style="color:var(--coral-2)">Sky file unavailable — using procedural backup</span>';
+      setTimeout(() => loaderEl.classList.add('hidden'), 3000);
+      setTimeout(() => loaderEl.remove(), 4000);
+      return;
+    }
+    const url = skyUrls[idx];
+    try {
   exrLoader.load(
-    'sky.exr',
+    url,
     function onLoad(texture) {
       texture.mapping = THREE.EquirectangularReflectionMapping;
       // Use a PMREM (pre-filtered radiance environment map) so material
@@ -1945,11 +2379,12 @@ function updateSky() {
       pmrem.dispose();
       // Hide the procedural sky we built earlier — the photo replaces it.
       skyGroup.visible = false;
-      // The procedural ambient/dir lights still cast shadows. Adjust them so
-      // they don't compete with the HDRI's own ambient contribution.
-      ambient.intensity = 0.25;
-      dirLight.intensity = 0.85;
-      fillLight.intensity = 0.0;
+      // Soften the manual lights since the HDRI provides image-based ambient
+      // — keep things even (no key/fill bias) for the shadow-free flat lighting.
+      ambient.intensity = 0.35;
+      hemiLight.intensity = 0.30;
+      dirLight.intensity = 0.30;
+      fillLight.intensity = 0.30;
       // Swap renderer clear color to a neutral so any flicker frame matches sky.
       renderer.setClearColor(0xc8d8e8);
       // Fade out the loader badge
@@ -1967,25 +2402,60 @@ function updateSky() {
       }
     },
     function onError(err) {
-      console.warn('HDRI load failed — falling back to procedural sky:', err);
-      // Hide the loader and a brief inline note. The procedural sky stays.
-      loaderEl.innerHTML = '<span style="color:var(--coral-2)">Sky file missing — using procedural backup</span>';
-      setTimeout(() => loaderEl.classList.add('hidden'), 4000);
-      setTimeout(() => loaderEl.remove(), 5000);
+      console.warn(`HDRI source ${idx} failed (${url}) — trying next...`);
+      tryLoadSky(idx + 1);
     }
   );
+    } catch (e) {
+      console.warn(`HDRI source ${idx} threw synchronously (${url}) — trying next...`, e);
+      tryLoadSky(idx + 1);
+    }
+  }
+  tryLoadSky(0);
 })();
 
-// Grid — deep navy lines, brass major lines for nautical feel
-const gridHelper = new THREE.GridHelper(20, 20, 0x3d6486, 0x1d3850);
+// Grid — two-tier reference: faint 1 mm minor grid + bold 10 mm major grid.
+// Anti-flicker recipe:
+//   • Neither grid writes to the depth buffer (so they never z-fight each
+//     other) — they STILL test against it, so 3D objects properly hide grid
+//     lines behind them.
+//   • Explicit renderOrder forces a stable draw sequence (minor first, major
+//     on top) — without it, transparent sort order flips frame-to-frame as
+//     the camera moves, causing the visible jitter.
+//   • Y separation is generous enough (~1 mm) that even shallow camera
+//     angles get clean depth-buffer resolution.
+const minorGrid = new THREE.GridHelper(200, 200, 0xa8b8c8, 0xa8b8c8);
+minorGrid.material.transparent = true;
+minorGrid.material.opacity = 0.30;
+minorGrid.material.depthWrite = false;
+minorGrid.material.depthTest  = true;
+minorGrid.position.y = -1.0;
+minorGrid.renderOrder = -2;        // draws BEFORE 3D objects so it sits behind
+scene.add(minorGrid);
+
+const gridHelper = new THREE.GridHelper(200, 20, 0x3d6486, 0x1d3850);
+gridHelper.material.transparent = true;
+gridHelper.material.opacity     = 0.95;
+gridHelper.material.depthWrite  = false;
+gridHelper.material.depthTest   = true;
+gridHelper.position.y = 0;
+gridHelper.renderOrder = -1;       // draws right after minor, still before objects
 scene.add(gridHelper);
 
-// Ground plane (invisible, for shadows)
-const groundGeo = new THREE.PlaneGeometry(40, 40);
-const groundMat = new THREE.ShadowMaterial({ opacity: 0.34 });
+// Ground plane — visible at 35% opacity so users can see the working surface
+// against the sky. Slightly larger than the grid for visual padding.
+const groundGeo = new THREE.PlaneGeometry(220, 220);
+const groundMat = new THREE.MeshBasicMaterial({
+  color: 0xf1f7fc,
+  transparent: true,
+  opacity: 0.35,
+  side: THREE.DoubleSide,
+  depthWrite: false,         // don't block the grid lines drawn on top
+});
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
+ground.position.y = -1.5;    // sit BELOW both grids
+ground.renderOrder = -3;     // and DRAW first, so grids layer cleanly on top
 scene.add(ground);
 
 // ── State ──
@@ -2039,7 +2509,43 @@ let dragOffset = new THREE.Vector3();
 let dragStartPositions = new Map();
 let isDraggingObj = false;
 
-let spherical = { theta: 0.8, phi: 0.9, radius: 16 };
+let spherical = { theta: 0.8, phi: 0.9, radius: 80 };
+// "Target" state — all camera inputs write here. Each frame the actual
+// `spherical` and `scene.position` lerp toward these, producing smooth
+// damped camera movement (orbit, zoom, pan, view snaps).
+const sphericalTarget = { theta: 0.8, phi: 0.9, radius: 80 };
+const scenePosTarget = new THREE.Vector3(0, 0, 0);
+// Damping factor per frame: higher = snappier, lower = smoother.
+const CAMERA_DAMP = 0.18;
+function dampCamera() {
+  const dt = CAMERA_DAMP;
+  const dTheta  = sphericalTarget.theta  - spherical.theta;
+  const dPhi    = sphericalTarget.phi    - spherical.phi;
+  const dRadius = sphericalTarget.radius - spherical.radius;
+  const dx = scenePosTarget.x - scene.position.x;
+  const dy = scenePosTarget.y - scene.position.y;
+  const dz = scenePosTarget.z - scene.position.z;
+  // Skip updates when essentially settled to save work
+  const settled =
+    Math.abs(dTheta)  < 1e-5 && Math.abs(dPhi)    < 1e-5 &&
+    Math.abs(dRadius) < 1e-3 &&
+    Math.abs(dx) < 1e-3 && Math.abs(dy) < 1e-3 && Math.abs(dz) < 1e-3;
+  if (settled) {
+    // Snap to exact target so floating-point doesn't accumulate residual
+    spherical.theta  = sphericalTarget.theta;
+    spherical.phi    = sphericalTarget.phi;
+    spherical.radius = sphericalTarget.radius;
+    scene.position.copy(scenePosTarget);
+    return;
+  }
+  spherical.theta  += dTheta  * dt;
+  spherical.phi    += dPhi    * dt;
+  spherical.radius += dRadius * dt;
+  scene.position.x += dx * dt;
+  scene.position.y += dy * dt;
+  scene.position.z += dz * dt;
+  updateCamera();
+}
 
 function updateCamera() {
   camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
@@ -2058,29 +2564,36 @@ function raycastAt(clientX, clientY) {
   return raycaster;
 }
 
+let pendingDragHit = null;
+let pendingDragPivot = null;
+
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+
 renderer.domElement.addEventListener('mousedown', e => {
   dragStart = { x: e.clientX, y: e.clientY };
   orbitState.lastX = e.clientX;
   orbitState.lastY = e.clientY;
 
-  // Construction tools (workplane / ruler) keep their click-based behavior —
-  // we don't start any drag mode for them.
-  if (activeTool === 'workplane' || activeTool === 'ruler') {
-    return;
-  }
+  if (activeTool === 'workplane' || activeTool === 'ruler') return;
 
   if (e.button === 0) {
-    // ── LEFT BUTTON ──
-    // First check gizmo handles (highest priority)
-    if (tryStartGizmoDrag(e)) {
-      return;
-    }
-    // Did we click an object? If yes, no drag — just selection (handled on click event).
+    // ── LEFT BUTTON: gizmo handles → object move → marquee ──
+    if (tryStartGizmoDrag(e)) return;
+
     raycastAt(e.clientX, e.clientY);
     const objHits = raycaster.intersectObjects(objects);
     if (objHits.length > 0) {
-      // Just a select — don't start any drag
-      dragMode = 'none';
+      if (e.shiftKey) {
+        // Shift+click: let the click event handle multi-select toggle — no drag
+        dragMode = 'none';
+        return;
+      }
+      const pivot = objHits[0].object;
+      if (!selectedSet.has(pivot)) selectObject(pivot);
+      // Prime a pending move — activates only once mouse moves > threshold
+      dragMode = 'pendingMove';
+      pendingDragHit   = objHits[0];
+      pendingDragPivot = pivot;
       return;
     }
     // Empty space → marquee
@@ -2095,47 +2608,12 @@ renderer.domElement.addEventListener('mousedown', e => {
     m.style.width = '0px';
     m.style.height = '0px';
   } else if (e.button === 1) {
-    // ── MIDDLE BUTTON → pan (hand-grab) ──
+    // ── MIDDLE BUTTON → pan ──
     dragMode = 'pan';
     e.preventDefault();
   } else if (e.button === 2) {
-    // ── RIGHT BUTTON ──
-    // If there's a hit on a SELECTED object → move it. If on an UNSELECTED
-    // object → still let user move it (without changing selection). If empty → orbit.
-    raycastAt(e.clientX, e.clientY);
-    const targets = selectedSet.size > 0 ? [...selectedSet] : objects;
-    const hits = raycaster.intersectObjects(targets);
-    if (hits.length > 0) {
-      // Start moving — same behaviour as the old left-click drag-move
-      const pivot = hits[0].object;
-      // If the user right-clicks an unselected object, select it (so the gizmo
-      // appears) and move it solo. If it's already part of the selection, move
-      // the whole group.
-      if (!selectedSet.has(pivot)) {
-        selectObject(pivot);
-      }
-      dragMode = 'moveObj';
-      isDraggingObj = true;
-      dragPlane.setFromNormalAndCoplanarPoint(
-        new THREE.Vector3(0, 1, 0),
-        hits[0].point
-      );
-      dragOffset.subVectors(pivot.position, hits[0].point);
-      dragStartPositions.clear();
-      const movingTargets = selectedSet.size > 1
-        ? [...selectedSet]
-        : [pivot];
-      movingTargets.forEach(o => dragStartPositions.set(o, {
-        pos: o.position.clone(),
-        delta: o.position.clone().sub(pivot.position)
-      }));
-      dragStartPositions.set('__pivot', pivot);
-      e.preventDefault();
-      e.stopPropagation();
-    } else {
-      // Empty space + right-click → orbit
-      dragMode = 'orbit';
-    }
+    // ── RIGHT BUTTON → orbit always ──
+    dragMode = 'orbit';
   }
 });
 
@@ -2143,22 +2621,49 @@ window.addEventListener('mousemove', e => {
   if (gizmo.active) return; // gizmo drag has its own handler
   if (dragMode === 'none') return;
 
+  // pendingMove → activate real drag once mouse has moved enough
+  if (dragMode === 'pendingMove') {
+    const adx = Math.abs(e.clientX - dragStart.x);
+    const ady = Math.abs(e.clientY - dragStart.y);
+    if (adx > 3 || ady > 3) {
+      const pivot = pendingDragPivot;
+      dragMode = 'moveObj';
+      isDraggingObj = true;
+      dragPlane.setFromNormalAndCoplanarPoint(
+        new THREE.Vector3(0, 1, 0),
+        pendingDragHit.point
+      );
+      dragOffset.subVectors(pivot.position, pendingDragHit.point);
+      dragStartPositions.clear();
+      const movingTargets = selectedSet.size > 1 ? [...selectedSet] : [pivot];
+      movingTargets.forEach(o => dragStartPositions.set(o, {
+        pos: o.position.clone(),
+        delta: o.position.clone().sub(pivot.position)
+      }));
+      dragStartPositions.set('__pivot', pivot);
+      orbitState.lastX = e.clientX;
+      orbitState.lastY = e.clientY;
+    }
+    return;
+  }
+
   const dx = e.clientX - orbitState.lastX;
   const dy = e.clientY - orbitState.lastY;
   orbitState.lastX = e.clientX;
   orbitState.lastY = e.clientY;
 
   if (dragMode === 'orbit') {
-    spherical.theta -= dx * 0.008;
-    spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi + dy * 0.008));
-    updateCamera();
+    sphericalTarget.theta -= dx * 0.008;
+    sphericalTarget.phi = Math.max(0.1, Math.min(Math.PI - 0.1, sphericalTarget.phi + dy * 0.008));
   } else if (dragMode === 'pan') {
-    // Middle-click hand-grab: drag right → content moves right
-    const panSpeed = 0.015;
+    // Middle-click hand-grab: drag right → content moves right.
+    // Pan speed scales with camera distance so the felt sensitivity stays
+    // consistent at any zoom level (closer = finer pan, farther = bigger pan).
+    const panSpeed = spherical.radius * 0.0018;
     const right = new THREE.Vector3();
     right.crossVectors(camera.getWorldDirection(new THREE.Vector3()), camera.up).normalize();
-    scene.position.addScaledVector(right, dx * panSpeed);
-    scene.position.addScaledVector(camera.up, -dy * panSpeed);
+    scenePosTarget.addScaledVector(right, dx * panSpeed);
+    scenePosTarget.addScaledVector(camera.up, -dy * panSpeed);
   } else if (dragMode === 'marquee') {
     // Update rubber-band rectangle
     const rect = renderer.domElement.getBoundingClientRect();
@@ -2195,6 +2700,11 @@ window.addEventListener('mousemove', e => {
 });
 
 window.addEventListener('mouseup', e => {
+  // pendingMove that never turned into a real drag → treat as plain click
+  if (dragMode === 'pendingMove') {
+    dragMode = 'none';
+    return;
+  }
   // Marquee finalisation
   if (dragMode === 'marquee') {
     const m = document.getElementById('marquee');
@@ -2235,7 +2745,11 @@ function finalizeMarquee(x0, y0, x1, y1, addToSelection) {
 
   if (!addToSelection) {
     // Replace the existing selection
-    selectedSet.forEach(o => { o.material.emissive.setHex(0x000000); o.material.emissiveIntensity = 0; });
+    selectedSet.forEach(o => {
+      o.material.emissive.setHex(0x000000);
+      o.material.emissiveIntensity = 0;
+      removeEdgeOverlay(o);
+    });
     selectedSet.clear();
     selected = null;
   }
@@ -2253,7 +2767,7 @@ function finalizeMarquee(x0, y0, x1, y1, addToSelection) {
 }
 
 renderer.domElement.addEventListener('wheel', e => {
-  spherical.radius = Math.max(1, Math.min(80, spherical.radius + e.deltaY * 0.02));
+  sphericalTarget.radius = Math.max(2, Math.min(400, sphericalTarget.radius + e.deltaY * 0.12));
   updateCamera();
   e.preventDefault();
 }, { passive: false });
@@ -2316,19 +2830,91 @@ function buildGeometry(type, params = {}) {
       return new THREE.TorusGeometry(r, t, 16, seg);
     }
     case 'wedge': return buildWedge();
-    case 'text': return buildTextGeometry(params.text || 'HELLO', params.depth ?? 0.4, params.size ?? 0.8);
-    default: return new THREE.BoxGeometry(1.5, 1.5, 1.5);
+    case 'text': return buildTextGeometry(params.text || 'HELLO', params.depth ?? 4, params.size ?? 8);
+    case 'tetrahedron': return new THREE.TetrahedronGeometry(params.radius ?? 10);
+    case 'octahedron':  return new THREE.OctahedronGeometry(params.radius ?? 9);
+    case 'icosahedron': return new THREE.IcosahedronGeometry(params.radius ?? 9);
+    case 'hemisphere':  return buildHemisphere(params.radius ?? 10, params.widthSeg ?? 32, params.heightSeg ?? 16);
+    case 'prism':       return buildTriangularPrism(params.radius ?? 9, params.height ?? 15);
+    case 'capsule':     return buildCapsule(params.radius ?? 5, params.height ?? 16);
+    case 'ring':        return buildRing(params.outerR ?? 10, params.innerR ?? 5, params.height ?? 4);
+    case 'star':        return buildStar(params.points ?? 5, params.outerR ?? 10, params.innerR ?? 4, params.depth ?? 5);
+    default: return new THREE.BoxGeometry(15, 15, 15);
   }
 }
 
 function buildWedge() {
   const shape = new THREE.Shape();
   shape.moveTo(0, 0);
-  shape.lineTo(1.5, 0);
-  shape.lineTo(0, 1.5);
+  shape.lineTo(15, 0);
+  shape.lineTo(0, 15);
   shape.closePath();
-  const g = new THREE.ExtrudeGeometry(shape, { depth: 1.5, bevelEnabled: false });
-  g.translate(-0.75, 0, -0.75);
+  const g = new THREE.ExtrudeGeometry(shape, { depth: 15, bevelEnabled: false });
+  g.translate(-7.5, 0, -7.5);
+  return g;
+}
+
+// ── New shape builders ──
+function buildHemisphere(r, wSeg = 32, hSeg = 16) {
+  // Sphere clipped to top hemisphere (phi 0 → π/2), then capped with a disk.
+  const dome = new THREE.SphereGeometry(r, wSeg, hSeg, 0, Math.PI * 2, 0, Math.PI / 2);
+  const cap = new THREE.CircleGeometry(r, wSeg);
+  cap.rotateX(Math.PI / 2);  // face downward to close the hemisphere
+  const merged = mergeGeometries([dome, cap]);
+  // Sit it on the floor: translate up by 0 (sphere center is already at y=0,
+  // dome goes from y=0 to y=r, cap at y=0)
+  return merged;
+}
+
+function buildTriangularPrism(r, h) {
+  // Equilateral triangle base, extruded vertically
+  const s = r * Math.sqrt(3);   // edge length so circumradius = r
+  const shape = new THREE.Shape();
+  shape.moveTo(0, r);
+  shape.lineTo(-s/2, -r/2);
+  shape.lineTo(s/2, -r/2);
+  shape.closePath();
+  const g = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+  g.rotateX(-Math.PI / 2);    // lay flat: extrude was along +Z, swap to +Y
+  g.translate(0, 0, 0);
+  return g;
+}
+
+function buildCapsule(r, h) {
+  // Cylinder shaft (open-ended — hemispheres close it) + two hemisphere caps.
+  // Total height = h + 2r. The hemispheres sit flush with the cylinder ends.
+  const shaft = new THREE.CylinderGeometry(r, r, h, 32, 1, true);
+  const topCap = new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  topCap.translate(0, h/2, 0);
+  const botCap = new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+  botCap.translate(0, -h/2, 0);
+  return mergeGeometries([shaft, topCap, botCap]);
+}
+
+function buildRing(outerR, innerR, height) {
+  // Annular extrude — outer circle with inner hole
+  const outer = new THREE.Shape();
+  outer.absarc(0, 0, outerR, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
+  outer.holes.push(hole);
+  const g = new THREE.ExtrudeGeometry(outer, { depth: height, bevelEnabled: false, curveSegments: 48 });
+  g.rotateX(-Math.PI / 2);
+  return g;
+}
+
+function buildStar(points, outerR, innerR, depth) {
+  const shape = new THREE.Shape();
+  const step = Math.PI / points;
+  for (let i = 0; i < points * 2; i++) {
+    const r = (i % 2 === 0) ? outerR : innerR;
+    const a = i * step - Math.PI / 2;
+    const x = Math.cos(a) * r, y = Math.sin(a) * r;
+    if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
+  }
+  shape.closePath();
+  const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
+  g.rotateX(-Math.PI / 2);
   return g;
 }
 
@@ -2368,27 +2954,27 @@ function buildTextGeometry(text, depth, size) {
   return merged;
 }
 
-// Lightweight merge replacement (BufferGeometryUtils not in r128 core)
+// Lightweight merge replacement (BufferGeometryUtils not in r128 core).
+// IMPORTANT: most Three.js geometries are INDEXED (positions are unique
+// vertices, triangles are formed via an index buffer). Naively concatenating
+// position arrays produces random triangles. We expand each geometry to
+// non-indexed form first so its position array directly maps to triangles.
 function mergeGeometries(geos) {
-  const out = new THREE.BufferGeometry();
-  let posCount = 0, normCount = 0;
-  geos.forEach(g => {
-    const p = g.attributes.position;
-    posCount += p.count * 3;
-    if (g.attributes.normal) normCount += g.attributes.normal.count * 3;
-  });
+  const flat = geos.map(g => g.index ? g.toNonIndexed() : g);
+  flat.forEach(g => { if (!g.attributes.normal) g.computeVertexNormals(); });
+  let posCount = 0;
+  flat.forEach(g => { posCount += g.attributes.position.array.length; });
   const positions = new Float32Array(posCount);
-  const normals = new Float32Array(posCount);
-  let pIdx = 0, nIdx = 0;
-  geos.forEach(g => {
-    g.computeVertexNormals();
-    const p = g.attributes.position.array;
-    const n = g.attributes.normal.array;
-    positions.set(p, pIdx);
-    normals.set(n, nIdx);
-    pIdx += p.length;
-    nIdx += n.length;
+  const normals   = new Float32Array(posCount);
+  let offset = 0;
+  flat.forEach(g => {
+    const pArr = g.attributes.position.array;
+    const nArr = g.attributes.normal.array;
+    positions.set(pArr, offset);
+    normals.set(nArr, offset);
+    offset += pArr.length;
   });
+  const out = new THREE.BufferGeometry();
   out.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   out.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
   return out;
@@ -2400,15 +2986,25 @@ function createShape(type, presetParams = null) {
   if (!params) {
     // Default params per type
     switch(type) {
-      case 'box':      params = { w: 1.5, h: 1.5, d: 1.5, seg: 1 }; break;
-      case 'sphere':   params = { radius: 0.85, widthSeg: 32, heightSeg: 32 }; break;
-      case 'cylinder': params = { radius: 0.7, height: 1.5, sides: 32 }; break;
-      case 'cone':     params = { radius: 0.85, height: 1.8, sides: 32 }; break;
-      case 'pyramid':  params = { radius: 1.0, height: 1.6 }; break;
-      case 'torus':    params = { radius: 0.7, tube: 0.28, segments: 48 }; break;
-      case 'wedge':    params = {}; break;
-      case 'text':     params = { text: 'HELLO', depth: 0.4, size: 0.8 }; break;
-      default:         params = {};
+      // Default sizes scaled for the 200x200 mm working plane — typical
+      // 3D-print-friendly starting sizes (~10-20 mm objects).
+      case 'box':         params = { w: 15, h: 15, d: 15, seg: 1 }; break;
+      case 'sphere':      params = { radius: 8.5, widthSeg: 32, heightSeg: 32 }; break;
+      case 'cylinder':    params = { radius: 7, height: 15, sides: 32 }; break;
+      case 'cone':        params = { radius: 8.5, height: 18, sides: 32 }; break;
+      case 'pyramid':     params = { radius: 10, height: 16 }; break;
+      case 'torus':       params = { radius: 7, tube: 2.8, segments: 48 }; break;
+      case 'wedge':       params = {}; break;
+      case 'text':        params = { text: 'HELLO', depth: 4, size: 8 }; break;
+      case 'tetrahedron': params = { radius: 10 }; break;
+      case 'octahedron':  params = { radius: 9 }; break;
+      case 'icosahedron': params = { radius: 9 }; break;
+      case 'hemisphere':  params = { radius: 10, widthSeg: 32, heightSeg: 16 }; break;
+      case 'prism':       params = { radius: 9, height: 15 }; break;
+      case 'capsule':     params = { radius: 5, height: 16 }; break;
+      case 'ring':        params = { outerR: 10, innerR: 5, height: 4 }; break;
+      case 'star':        params = { points: 5, outerR: 10, innerR: 4, depth: 5 }; break;
+      default:            params = {};
     }
   }
 
@@ -2546,23 +3142,59 @@ renderer.domElement.addEventListener('click', e => {
   }
 });
 
+// ── Dashed edge overlay (TinkerCad-style X-ray wireframe on selection) ──
+// When a shape is selected, we render a dashed wireframe of its edges that's
+// visible THROUGH the shape (depthTest off), so the user can see the back-side
+// dimensions of the geometry as well as the front.
+function addEdgeOverlay(mesh) {
+  if (mesh.userData.edgeOverlay) return;
+  const edges = new THREE.EdgesGeometry(mesh.geometry, 18); // angle threshold in degrees
+  const mat = new THREE.LineDashedMaterial({
+    color: 0x1f3850,
+    dashSize: 1.2,
+    gapSize: 0.8,
+    transparent: true,
+    opacity: 0.85,
+    depthTest: false,        // visible through the shape itself
+  });
+  const lines = new THREE.LineSegments(edges, mat);
+  lines.computeLineDistances();
+  lines.renderOrder = 999;   // draw after the shape so it sits on top
+  mesh.add(lines);
+  mesh.userData.edgeOverlay = lines;
+}
+function removeEdgeOverlay(mesh) {
+  const ov = mesh.userData.edgeOverlay;
+  if (!ov) return;
+  mesh.remove(ov);
+  ov.geometry.dispose();
+  ov.material.dispose();
+  mesh.userData.edgeOverlay = null;
+}
+
 function selectObject(obj, isMulti = false) {
-  // Reset emissive on all selected
+  // Reset emissive + edge overlay on previously selected
   if (!isMulti) {
-    selectedSet.forEach(o => { o.material.emissive.setHex(0x000000); o.material.emissiveIntensity = 0; });
+    selectedSet.forEach(o => {
+      o.material.emissive.setHex(0x000000);
+      o.material.emissiveIntensity = 0;
+      removeEdgeOverlay(o);
+    });
     selectedSet.clear();
   }
   if (selected && !selectedSet.has(selected)) {
     selected.material.emissive.setHex(0x000000);
     selected.material.emissiveIntensity = 0;
+    removeEdgeOverlay(selected);
   }
   selected = obj;
   if (obj) {
     selectedSet.add(obj);
-    // Highlight all in multi-selection
+    // Highlight all in multi-selection + add dashed edge overlay
     selectedSet.forEach(o => {
       o.material.emissive.setHex(o === obj ? 0x4f8ef7 : 0x7c5cfc);
       o.material.emissiveIntensity = o === obj ? 0.22 : 0.14;
+      addEdgeOverlay(o);
     });
     showProps(obj);
     updateObjectList();
@@ -2605,33 +3237,82 @@ gizmo.group.visible = false;
   gizmo.frame.renderOrder = 999;
   gizmo.group.add(gizmo.frame);
 
-  // ── 6 face-center scale handles ──
-  const handleGeo = new THREE.BoxGeometry(1, 1, 1);
-  const axisColors = { x: 0xd96a55, y: 0x6fb39d, z: 0x6ea8d4 };
+  // ── 6 scale handles — small white camera-facing squares (TinkerCad style) ──
+  const handleGeo = new THREE.PlaneGeometry(1, 1);
   ['x','y','z'].forEach(axis => {
     [+1, -1].forEach(sign => {
       const mat = new THREE.MeshBasicMaterial({
-        color: axisColors[axis], depthTest: false, transparent: true, opacity: 0.95
+        color: 0xffffff,
+        depthTest: false,
+        side: THREE.DoubleSide
       });
       const mesh = new THREE.Mesh(handleGeo, mat);
       mesh.renderOrder = 1000;
       mesh.userData.gizmo = { kind: 'scale', axis, sign };
+      // Thin dark outline so the white square reads against any background
+      const outlineGeo = new THREE.EdgesGeometry(handleGeo);
+      const outline = new THREE.LineSegments(outlineGeo,
+        new THREE.LineBasicMaterial({ color: 0x1f3850, depthTest: false }));
+      outline.renderOrder = 1001;
+      mesh.add(outline);
       gizmo.group.add(mesh);
       gizmo.handles.push(mesh);
     });
   });
 
-  // ── 3 rotation rings (torus per axis) ──
+  // ── Rotation handles: short curved arrow per axis (default) + full ring
+  //    overlay shown while actively rotating. The arrow is the clickable
+  //    target; the full circle is a visual guide during the drag.
+  const ringColors = { x: 0xd96a55, y: 0x6fb39d, z: 0x6ea8d4 };
+  gizmo.ringGroups = [];   // per-axis transform group (holds arc + arrow + full ring)
+  gizmo.fullRings  = [];   // { axis, mesh } — toggled visible while rotating
   ['x','y','z'].forEach(axis => {
-    const ringGeo = new THREE.TorusGeometry(1, 0.025, 8, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: axisColors[axis], depthTest: false, transparent: true, opacity: 0.55
+    const group = new THREE.Group();
+
+    // Short arc (the "curved arrow body") — 70° span centered around theta=0
+    const ARC = Math.PI * 70 / 180;
+    const arcGeo = new THREE.TorusGeometry(1, 0.04, 8, 28, ARC);
+    arcGeo.rotateZ(-ARC / 2); // center the arc on the +X side
+    const arcMat = new THREE.MeshBasicMaterial({
+      color: ringColors[axis], depthTest: false, transparent: true, opacity: 0.9
     });
-    const mesh = new THREE.Mesh(ringGeo, ringMat);
-    mesh.renderOrder = 998;
-    mesh.userData.gizmo = { kind: 'rotate', axis };
-    gizmo.group.add(mesh);
-    gizmo.rings.push(mesh);
+    const arc = new THREE.Mesh(arcGeo, arcMat);
+    arc.renderOrder = 998;
+    arc.userData.gizmo = { kind: 'rotate', axis };
+    group.add(arc);
+    gizmo.rings.push(arc);   // raycast target
+
+    // Arrow head at the leading (clockwise) end of the arc
+    const headGeo = new THREE.ConeGeometry(0.085, 0.22, 12);
+    const headMat = arcMat;
+    const head = new THREE.Mesh(headGeo, headMat);
+    head.renderOrder = 998;
+    head.userData.gizmo = { kind: 'rotate', axis };
+    // Position at arc end, then offset slightly along tangent so the base
+    // sits flush with the arc and the tip points outward along rotation.
+    const endX = Math.cos(ARC / 2);
+    const endY = Math.sin(ARC / 2);
+    const tanX = -Math.sin(ARC / 2);
+    const tanY =  Math.cos(ARC / 2);
+    head.position.set(endX + tanX * 0.09, endY + tanY * 0.09, 0);
+    head.rotateZ(ARC / 2);  // align cone +Y axis with arc tangent
+    group.add(head);
+    gizmo.rings.push(head);  // also clickable
+
+    // Full ring overlay (hidden by default; shown during active rotation)
+    const fullGeo = new THREE.TorusGeometry(1, 0.022, 8, 96);
+    const fullMat = new THREE.MeshBasicMaterial({
+      color: ringColors[axis], depthTest: false, transparent: true, opacity: 0.4
+    });
+    const fullRing = new THREE.Mesh(fullGeo, fullMat);
+    fullRing.renderOrder = 997;
+    fullRing.visible = false;
+    group.add(fullRing);
+    gizmo.fullRings.push({ axis, mesh: fullRing });
+
+    group.userData.axis = axis;
+    gizmo.group.add(group);
+    gizmo.ringGroups.push({ axis, group });
   });
 
   // ── Up/down (move-Y) arrow handle ──
@@ -2677,7 +3358,9 @@ function showGizmo(obj) {
   if (!obj) { hideGizmo(); return; }
   gizmo.visible = true;
   gizmo.group.visible = true;
-  ['x','y','z'].forEach(ax => gizmo.labels[ax].style.display = 'block');
+  // Dimension labels stay HIDDEN until the user drags the matching scale
+  // handle — keeps the viewport uncluttered while just inspecting the shape.
+  ['x','y','z'].forEach(ax => { if (gizmo.labels[ax]) gizmo.labels[ax].style.display = 'none'; });
   updateGizmo();
 }
 
@@ -2747,7 +3430,10 @@ function updateGizmo() {
   });
   posAttr.needsUpdate = true;
 
-  // Face handles
+  // Scale handles always sit at the WORLD BOTTOM of the object — on whichever
+  // side is closest to the floor, regardless of how the object is rotated.
+  // X/Z handles ride the bottom edge of the world bounding box; Y+ sits on
+  // top center; Y- sits at the bottom-face center.
   const localFaceCenters = {
     x: { '+1': new THREE.Vector3(c.x + ext.hx, c.y, c.z), '-1': new THREE.Vector3(c.x - ext.hx, c.y, c.z) },
     y: { '+1': new THREE.Vector3(c.x, c.y + ext.hy, c.z), '-1': new THREE.Vector3(c.x, c.y - ext.hy, c.z) },
@@ -2755,15 +3441,33 @@ function updateGizmo() {
   };
   const worldBB = new THREE.Box3().setFromObject(obj);
   const wsize = worldBB.getSize(new THREE.Vector3());
-  const handleSize = Math.max(0.18, Math.min(wsize.x, wsize.y, wsize.z) * 0.13);
+  const wMidX = (worldBB.min.x + worldBB.max.x) * 0.5;
+  const wMidZ = (worldBB.min.z + worldBB.max.z) * 0.5;
+  const wFloor = worldBB.min.y;
+  const wTop   = worldBB.max.y;
+  // Visual positions in WORLD coords — always on the floor (or top for Y+)
+  const visualHandlePos = {
+    'x+1': new THREE.Vector3(worldBB.max.x, wFloor, wMidZ),
+    'x-1': new THREE.Vector3(worldBB.min.x, wFloor, wMidZ),
+    'y+1': new THREE.Vector3(wMidX, wTop, wMidZ),
+    'y-1': new THREE.Vector3(wMidX, wFloor, wMidZ),
+    'z+1': new THREE.Vector3(wMidX, wFloor, worldBB.max.z),
+    'z-1': new THREE.Vector3(wMidX, wFloor, worldBB.min.z),
+  };
+  // Proportional handle size — scales with the smallest object dimension so
+  // the squares never dominate small shapes or vanish on large ones.
+  const handleSize = Math.max(0.6, Math.min(7, Math.min(wsize.x, wsize.y, wsize.z) * 0.12));
 
   gizmo.handles.forEach(h => {
     const { axis, sign } = h.userData.gizmo;
-    const localPos = localFaceCenters[axis][sign > 0 ? '+1' : '-1'].clone();
-    const worldPos = localPos.applyMatrix4(obj.matrixWorld);
-    h.position.copy(worldPos).sub(sceneOffset);
-    h.scale.set(handleSize, handleSize, handleSize);
-    h.material.opacity = (axis === 'y' && sign > 0) ? 1.0 : 0.95;
+    const key = axis + (sign > 0 ? '+1' : '-1');
+    h.position.copy(visualHandlePos[key]).sub(sceneOffset);
+    // Store the TRUE local face position so the scale-drag math can use it
+    // (independent of the visual world-bottom location).
+    h.userData.localFacePos = localFaceCenters[axis][sign > 0 ? '+1' : '-1'];
+    h.scale.set(handleSize, handleSize, 1);
+    // Billboard: always face the camera so the square never goes edge-on
+    h.quaternion.copy(camera.quaternion);
   });
 
   // Rotation rings
@@ -2772,13 +3476,12 @@ function updateGizmo() {
   const objQuat = new THREE.Quaternion();
   obj.getWorldQuaternion(objQuat);
 
-  gizmo.rings.forEach(ring => {
-    const { axis } = ring.userData.gizmo;
-    ring.position.copy(objWorldCenter).sub(sceneOffset);
-    ring.quaternion.copy(objQuat);
-    if (axis === 'x')      ring.rotateY(Math.PI / 2);
-    else if (axis === 'y') ring.rotateX(Math.PI / 2);
-    ring.scale.set(ringRadius, ringRadius, 1);
+  gizmo.ringGroups.forEach(({ axis, group }) => {
+    group.position.copy(objWorldCenter).sub(sceneOffset);
+    group.quaternion.copy(objQuat);
+    if (axis === 'x')      group.rotateY(Math.PI / 2);
+    else if (axis === 'y') group.rotateX(Math.PI / 2);
+    group.scale.set(ringRadius, ringRadius, 1);
   });
 
   // ── Up/down (move-Y) arrow ──
@@ -2795,9 +3498,9 @@ function updateGizmo() {
       arrowBaseZ - sceneOffset.z
     );
     gizmo.yArrow.quaternion.set(0, 0, 0, 1); // identity — always world-up
-    // Scale the arrow to a readable size proportional to the object,
-    // but cap it so it doesn't dominate the viewport for big shapes.
-    const arrowScale = Math.max(0.5, Math.min(1.5, Math.min(wsize.x, wsize.y, wsize.z) * 0.55));
+    // Fixed arrow size — does NOT grow with the object. Sized to be
+    // visible and grabbable on the 200 mm working plane.
+    const arrowScale = 6;
     gizmo.yArrow.scale.set(arrowScale, arrowScale, arrowScale);
   }
 
@@ -2892,7 +3595,14 @@ function startScaleDrag(handleMesh, e) {
   const objWorldOrigin = new THREE.Vector3();
   obj.getWorldPosition(objWorldOrigin);
 
-  const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(planeNormal, handleMesh.position);
+  // The visual handle sits at the world-bottom of the object, but the scale
+  // math needs the TRUE face position in world space (the local face center
+  // transformed by the object's world matrix). Use that for the drag plane
+  // and the initial face distance so scaling math stays accurate even after
+  // rotation.
+  const truePos = (handleMesh.userData.localFacePos || handleMesh.position)
+    .clone().applyMatrix4(obj.matrixWorld);
+  const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(planeNormal, truePos);
 
   const startPoint = new THREE.Vector3();
   if (!raycaster.ray.intersectPlane(plane, startPoint)) return;
@@ -2907,12 +3617,17 @@ function startScaleDrag(handleMesh, e) {
     worldAxis: worldAxis.clone(),
     objStartPos: obj.position.clone(),
     objStartScale: obj.scale.clone(),
-    handleStartPos: handleMesh.position.clone(),
+    handleStartPos: truePos.clone(),
     startPoint: startPoint.clone(),
     halfExtent,
     localCenter,
-    initialFaceDistance: handleMesh.position.clone().sub(objWorldOrigin).dot(worldAxis),
+    initialFaceDistance: truePos.clone().sub(objWorldOrigin).dot(worldAxis),
   };
+  // Show ONLY the label for the axis being scaled. Other labels stay hidden.
+  ['x','y','z'].forEach(ax => {
+    if (!gizmo.labels[ax]) return;
+    gizmo.labels[ax].style.display = (ax === axis) ? 'block' : 'none';
+  });
   gizmo.labels[axis].classList.add('scaling');
   orbitState.active = false;
   isDraggingObj = false;
@@ -2989,14 +3704,20 @@ function startRotateDrag(ringMesh, hitPoint, e) {
 
   const startAngle = Math.atan2(radial.dot(v), radial.dot(u));
 
+  const bb0 = new THREE.Box3().setFromObject(obj);
   gizmo.active = { kind: 'rotate', axis };
   gizmo.start = {
     plane, center, worldAxis, u, v,
     startAngle,
     objStartRotation: obj.rotation.clone(),
     objStartPos: obj.position.clone(),
+    startBottomY: bb0.min.y,
   };
   document.getElementById('angle-readout').style.display = 'block';
+  // Show the full-circle guide ring for the axis being rotated
+  if (gizmo.fullRings) {
+    gizmo.fullRings.forEach(({ axis: a, mesh }) => { mesh.visible = (a === axis); });
+  }
   orbitState.active = false;
   isDraggingObj = false;
   e.stopPropagation();
@@ -3016,14 +3737,26 @@ function applyRotateDrag(e) {
   const radial = cur.sub(s.center);
   const curAngle = Math.atan2(radial.dot(s.v), radial.dot(s.u));
   let deltaAngle = curAngle - s.startAngle;
-  if (e.shiftKey) {
-    const snap = THREE.MathUtils.degToRad(15);
-    deltaAngle = Math.round(deltaAngle / snap) * snap;
+  // Soft snap to 22.5° intervals — pulls in when within a small tolerance of
+  // a stop, but lets the user dial any precise angle between stops. Hold Shift
+  // to bypass the snap entirely for completely free rotation.
+  if (!e.shiftKey) {
+    const SNAP = THREE.MathUtils.degToRad(22.5);
+    const TOL  = THREE.MathUtils.degToRad(3);
+    const total = s.objStartRotation[axis] + deltaAngle;
+    const nearest = Math.round(total / SNAP) * SNAP;
+    if (Math.abs(total - nearest) < TOL) {
+      deltaAngle = nearest - s.objStartRotation[axis];
+    }
   }
   obj.rotation[axis] = s.objStartRotation[axis] + deltaAngle;
   obj.position.copy(s.objStartPos);
-  // Keep object above the floor (rotation can dip a corner below)
-  clampAboveFloor(obj);
+  // Keep the bounding-box bottom at the same floor height it started at,
+  // instead of reclamping every frame (which causes the visible bounce).
+  obj.updateMatrixWorld(true);
+  const newBB = new THREE.Box3().setFromObject(obj);
+  obj.position.y += s.startBottomY - newBB.min.y;
+  if (obj.position.y < s.startBottomY) obj.position.y = s.startBottomY;
 
   const totalDeg = THREE.MathUtils.radToDeg(obj.rotation[axis]);
   const deltaDeg = THREE.MathUtils.radToDeg(deltaAngle);
@@ -3073,8 +3806,7 @@ function startYMoveDrag(e) {
 
   gizmo.active = { kind: 'moveY' };
   gizmo.start = { plane, startPointY: startPoint.y, targets, startYs };
-  // Highlight the Y dimension label
-  if (gizmo.labels.y) gizmo.labels.y.classList.add('scaling');
+  // moveY is positioning, not scaling — don't show the Y dimension label.
   orbitState.active = false;
   isDraggingObj = false;
   e.stopPropagation();
@@ -3110,8 +3842,17 @@ function applyYMoveDrag(e) {
 
 function endGizmoDrag() {
   if (!gizmo.active) return;
-  ['x','y','z'].forEach(ax => gizmo.labels[ax].classList.remove('scaling'));
+  // Hide and un-highlight all dimension labels when drag ends.
+  ['x','y','z'].forEach(ax => {
+    if (!gizmo.labels[ax]) return;
+    gizmo.labels[ax].classList.remove('scaling');
+    gizmo.labels[ax].style.display = 'none';
+  });
   document.getElementById('angle-readout').style.display = 'none';
+  // Hide all full-circle rotation guides
+  if (gizmo.fullRings) {
+    gizmo.fullRings.forEach(({ mesh }) => { mesh.visible = false; });
+  }
   gizmo.active = null;
   gizmo.start = null;
   pushUndo();
@@ -3150,6 +3891,8 @@ document.querySelectorAll('.prop-group-label.collapsible').forEach(label => {
 });
 
 function showProps(obj) {
+  const dd = document.getElementById('prop-dropdown');
+  if (dd) dd.style.display = 'block';
   document.getElementById('no-selection').style.display = 'none';
   document.getElementById('props-panel').style.display = 'block';
   updatePropsFromSelected();
@@ -3160,6 +3903,9 @@ function showProps(obj) {
 }
 
 function hideProps() {
+  // TinkerCad-style: hide the whole inspector when nothing is selected
+  const dd = document.getElementById('prop-dropdown');
+  if (dd) dd.style.display = 'none';
   document.getElementById('no-selection').style.display = 'block';
   document.getElementById('props-panel').style.display = 'none';
   updateViewportReadout(); // clears the top-right text
@@ -3168,11 +3914,22 @@ function hideProps() {
 function updatePropsFromSelected() {
   if (!selected) return;
   document.getElementById('prop-x').value = selected.position.x.toFixed(2);
-  document.getElementById('prop-y').value = selected.position.y.toFixed(2);
+  // Y is displayed as "height of the object's BOTTOM above the floor" so it
+  // reads naturally — 0 means sitting on the plane, regardless of rotation
+  // or how the geometry is centered relative to its pivot.
+  selected.updateMatrixWorld(true);
+  const _wbb = new THREE.Box3().setFromObject(selected);
+  document.getElementById('prop-y').value = _wbb.min.y.toFixed(2);
   document.getElementById('prop-z').value = selected.position.z.toFixed(2);
-  document.getElementById('prop-sx').value = selected.scale.x.toFixed(2);
-  document.getElementById('prop-sy').value = selected.scale.y.toFixed(2);
-  document.getElementById('prop-sz').value = selected.scale.z.toFixed(2);
+  // Display Size inputs in millimetres (= geometry extent × scale), not raw scale.
+  if (!selected.geometry.boundingBox) selected.geometry.computeBoundingBox();
+  const _bb = selected.geometry.boundingBox;
+  const _gw = _bb.max.x - _bb.min.x;
+  const _gh = _bb.max.y - _bb.min.y;
+  const _gd = _bb.max.z - _bb.min.z;
+  document.getElementById('prop-sx').value = (_gw * Math.abs(selected.scale.x)).toFixed(2);
+  document.getElementById('prop-sy').value = (_gh * Math.abs(selected.scale.y)).toFixed(2);
+  document.getElementById('prop-sz').value = (_gd * Math.abs(selected.scale.z)).toFixed(2);
   document.getElementById('prop-rx').value = (THREE.MathUtils.radToDeg(selected.rotation.x)).toFixed(1);
   document.getElementById('prop-ry').value = (THREE.MathUtils.radToDeg(selected.rotation.y)).toFixed(1);
   document.getElementById('prop-rz').value = (THREE.MathUtils.radToDeg(selected.rotation.z)).toFixed(1);
@@ -3205,23 +3962,25 @@ function updateViewportReadout() {
 }
 
 function updateHoleToggle(obj) {
-  const t = document.getElementById('hole-toggle');
-  const lbl = document.getElementById('hole-toggle-label');
-  const ic = document.getElementById('hole-toggle-icon');
-  if (obj.userData.isHole) {
-    t.classList.add('is-hole'); lbl.textContent = 'Hole (negative)'; ic.textContent = '◎';
-  } else {
-    t.classList.remove('is-hole'); lbl.textContent = 'Solid'; ic.textContent = '⬤';
-  }
+  const solidBtn = document.querySelector('#type-buttons .solid-btn');
+  const holeBtn  = document.querySelector('#type-buttons .hole-btn');
+  if (!solidBtn || !holeBtn) return;
+  const isHole = !!obj.userData.isHole;
+  solidBtn.classList.toggle('active', !isHole);
+  holeBtn.classList.toggle('active',  isHole);
 }
 
-document.getElementById('hole-toggle').addEventListener('click', () => {
-  if (!selected) return;
-  selected.userData.isHole = !selected.userData.isHole;
-  applyHoleAppearance(selected);
-  updateHoleToggle(selected);
-  updateObjectList();
-  pushUndo();
+document.querySelectorAll('#type-buttons .type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!selected) return;
+    const wantHole = btn.dataset.type === 'hole';
+    if (!!selected.userData.isHole === wantHole) return;   // no change
+    selected.userData.isHole = wantHole;
+    applyHoleAppearance(selected);
+    updateHoleToggle(selected);
+    updateObjectList();
+    pushUndo();
+  });
 });
 
 function applyHoleAppearance(obj) {
@@ -3289,14 +4048,19 @@ function buildShapeInspector(obj) {
       const newGeo = buildGeometry(type, obj.userData.params);
       obj.geometry.dispose();
       obj.geometry = newGeo;
+      // Rebuild the dashed edge overlay so it matches the new geometry
+      if (obj.userData.edgeOverlay) {
+        removeEdgeOverlay(obj);
+        addEdgeOverlay(obj);
+      }
       clampAboveFloor(obj);
       pushUndo();
     });
   });
 }
 
-// Bind prop inputs
-['x','y','z'].forEach(ax => {
+// Bind prop inputs — X/Z are pivot position, Y is "bottom height above floor"
+['x','z'].forEach(ax => {
   document.getElementById('prop-' + ax).addEventListener('change', () => {
     if (!selected) return;
     selected.position[ax] = parseFloat(document.getElementById('prop-' + ax).value) || 0;
@@ -3304,12 +4068,26 @@ function buildShapeInspector(obj) {
     pushUndo();
   });
 });
+document.getElementById('prop-y').addEventListener('change', () => {
+  if (!selected) return;
+  const desiredBottomY = Math.max(0, parseFloat(document.getElementById('prop-y').value) || 0);
+  selected.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(selected);
+  selected.position.y += desiredBottomY - bb.min.y;
+  clampAboveFloor(selected);
+  pushUndo();
+});
 ['sx','sy','sz'].forEach((id, i) => {
   const axis = ['x','y','z'][i];
   document.getElementById('prop-' + id).addEventListener('change', () => {
     if (!selected) return;
-    const v = Math.max(0.01, parseFloat(document.getElementById('prop-' + id).value) || 0.01);
-    selected.scale[axis] = v;
+    // Input is in millimetres — convert to a scale factor relative to the
+    // shape's local geometry extent so typing "30" gives a 30 mm dimension.
+    const desiredMm = Math.max(0.01, parseFloat(document.getElementById('prop-' + id).value) || 0.01);
+    if (!selected.geometry.boundingBox) selected.geometry.computeBoundingBox();
+    const bb = selected.geometry.boundingBox;
+    const geoSize = [bb.max.x - bb.min.x, bb.max.y - bb.min.y, bb.max.z - bb.min.z][i];
+    selected.scale[axis] = geoSize > 0.001 ? (desiredMm / geoSize) : 1;
     clampAboveFloor(selected);
     pushUndo();
   });
@@ -3415,6 +4193,15 @@ function promptForText(callback) {
     if (e.key === 'Escape') close(null);
   });
 }
+
+// ── Properties dropdown collapse toggle ──
+(function() {
+  const dd = document.getElementById('prop-dropdown');
+  const header = document.getElementById('prop-dropdown-header');
+  if (dd && header) {
+    header.addEventListener('click', () => dd.classList.toggle('collapsed'));
+  }
+})();
 
 // ── Tool buttons ──
 const toolBtns = ['tool-select','tool-rotate','tool-scale','tool-workplane','tool-ruler'];
@@ -3564,9 +4351,11 @@ window.addEventListener('keydown', e => {
 
 // ── Reset camera ──
 document.getElementById('btn-reset-cam').addEventListener('click', () => {
-  spherical = { theta: 0.8, phi: 0.9, radius: 16 };
-  scene.position.set(0, 0, 0);
-  updateCamera();
+  // Smooth reset — dampCamera will glide the view back to the home pose
+  sphericalTarget.theta  = 0.8;
+  sphericalTarget.phi    = 0.9;
+  sphericalTarget.radius = 80;
+  scenePosTarget.set(0, 0, 0);
 });
 
 // ── Grid toggle ──
@@ -3586,24 +4375,179 @@ document.getElementById('snap-select').addEventListener('change', e => {
 // ============================================================================
 // View Cube — switch to Top/Bottom/Left/Right/Front/Back/Home (isometric)
 // ============================================================================
-document.querySelectorAll('.vc-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const v = btn.dataset.view;
-    // Reset pan
-    scene.position.set(0, 0, 0);
-    switch(v) {
-      // theta = azimuth around Y, phi = polar from +Y
-      case 'top':    spherical = { theta: 0,           phi: 0.001,        radius: spherical.radius }; break;
-      case 'bottom': spherical = { theta: 0,           phi: Math.PI-0.001, radius: spherical.radius }; break;
-      case 'front':  spherical = { theta: 0,           phi: Math.PI/2,    radius: spherical.radius }; break;
-      case 'back':   spherical = { theta: Math.PI,     phi: Math.PI/2,    radius: spherical.radius }; break;
-      case 'right':  spherical = { theta: Math.PI/2,   phi: Math.PI/2,    radius: spherical.radius }; break;
-      case 'left':   spherical = { theta: -Math.PI/2,  phi: Math.PI/2,    radius: spherical.radius }; break;
-      case 'home':   spherical = { theta: 0.8,         phi: 0.9,          radius: 16 }; break;
-    }
-    updateCamera();
+// ============================================================================
+// Dodecahedron Orientation Gizmo
+// ============================================================================
+let dodecGizmo;
+try {
+dodecGizmo = (function() {
+  const canvas = document.getElementById('dodec-canvas');
+  const ctx    = canvas.getContext('2d');
+  const lbl    = document.getElementById('dodec-label');
+  const W = canvas.width, H = canvas.height;
+  const CX = W * 0.5, CY = H * 0.5, SCALE = 38;
+  const φ = (1 + Math.sqrt(5)) / 2;
+
+  // 20 vertices of a regular dodecahedron, normalised to unit sphere
+  const raw = [
+    [ 1, 1, 1],[ 1, 1,-1],[ 1,-1, 1],[ 1,-1,-1],
+    [-1, 1, 1],[-1, 1,-1],[-1,-1, 1],[-1,-1,-1],
+    [0, 1/φ, φ],[0, 1/φ,-φ],[0,-1/φ, φ],[0,-1/φ,-φ],
+    [1/φ, φ, 0],[1/φ,-φ, 0],[-1/φ, φ, 0],[-1/φ,-φ, 0],
+    [φ, 0, 1/φ],[φ, 0,-1/φ],[-φ, 0, 1/φ],[-φ, 0,-1/φ]
+  ];
+  const normR = Math.hypot(raw[0][0], raw[0][1], raw[0][2]);
+  const VERTS = raw.map(([x,y,z]) => [x/normR, y/normR, z/normR]);
+
+  // 12 pentagonal faces (vertex indices, CCW from outside)
+  const FACES = [
+    [0, 8, 4,14,12],[0,12, 1,17,16],[0,16, 2,10, 8],[1,12,14, 5, 9],
+    [1, 9,11, 3,17],[2,16,17, 3,13],[2,13,15, 6,10],[3,11, 7,15,13],
+    [4, 8,10, 6,18],[4,18,19, 5,14],[5,19, 7,11, 9],[6,15, 7,19,18],
+  ];
+
+  // Outward face normals (normalised average of pentagon vertices)
+  const FNORMS = FACES.map(fi => {
+    let x=0,y=0,z=0;
+    fi.forEach(i => { x+=VERTS[i][0]; y+=VERTS[i][1]; z+=VERTS[i][2]; });
+    const l = Math.hypot(x,y,z); return [x/l,y/l,z/l];
   });
-});
+
+  function faceLabel([nx,ny,nz]) {
+    const p=[];
+    if (Math.abs(ny)>0.38) p.push(ny>0?'Top':'Bot');
+    if (Math.abs(nx)>0.38) p.push(nx>0?'R':'L');
+    if (Math.abs(nz)>0.38) p.push(nz>0?'F':'Bk');
+    return p.join('·') || 'Home';
+  }
+
+  // Project world vector to camera-aligned [px, py, pz]
+  // Right=(cosT,0,-sinT)  Up=(-cosP·sinT, sinP, -cosP·cosT)  Fwd=(-sinP·sinT,-cosP,-sinP·cosT)
+  function proj(v, cosT, sinT, cosP, sinP) {
+    const [x,y,z] = v;
+    const px =  x*cosT - z*sinT;
+    const py =  x*(-cosP*sinT) + y*sinP + z*(-cosP*cosT);
+    const pz =  x*(-sinP*sinT) + y*(-cosP) + z*(-sinP*cosT);
+    return [px,py,pz];
+  }
+
+  function ptInPoly(px,py,pts) {
+    let inside=false;
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+      const [xi,yi]=pts[i],[xj,yj]=pts[j];
+      if(((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi)) inside=!inside;
+    }
+    return inside;
+  }
+
+  let hovered = -1;
+  let drag = null;
+
+  function draw() {
+    const theta = spherical.theta, phi = spherical.phi;
+    const cosT=Math.cos(theta),sinT=Math.sin(theta);
+    const cosP=Math.cos(phi),sinP=Math.sin(phi);
+    ctx.clearRect(0,0,W,H);
+
+    // Background circle
+    ctx.beginPath(); ctx.arc(CX,CY,SCALE+5,0,Math.PI*2);
+    ctx.fillStyle='rgba(31,56,80,0.22)'; ctx.fill();
+
+    const pv = VERTS.map(v => proj(v,cosT,sinT,cosP,sinP));
+    const fdata = FACES.map((fi,i) => {
+      const vp = fi.map(vi=>pv[vi]);
+      const cz = vp.reduce((s,p)=>s+p[2],0)/5;
+      const np = proj(FNORMS[i],cosT,sinT,cosP,sinP);
+      return { i, vp, cz, facing:-np[2] };
+    }).sort((a,b)=>a.cz-b.cz);
+
+    fdata.forEach(({i,vp,facing})=>{
+      const pts = vp.map(([px,py])=>[CX+px*SCALE, CY-py*SCALE]);
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      for(let k=1;k<5;k++) ctx.lineTo(pts[k][0],pts[k][1]);
+      ctx.closePath();
+
+      if(facing <= 0) {
+        ctx.fillStyle='rgba(20,40,60,0.15)'; ctx.fill(); return;
+      }
+      const isH = i===hovered;
+      const b = Math.round((0.25+facing*0.55)*255);
+      ctx.fillStyle = isH ? 'rgba(212,169,58,0.88)' : `rgba(${b-10},${b+10},${b+30},0.80)`;
+      ctx.strokeStyle = isH ? 'rgba(212,169,58,1)' : 'rgba(212,169,58,0.35)';
+      ctx.lineWidth = isH ? 1.2 : 0.7;
+      ctx.fill(); ctx.stroke();
+      if(facing>0.28){
+        const cx2=pts.reduce((s,p)=>s+p[0],0)/5;
+        const cy2=pts.reduce((s,p)=>s+p[1],0)/5;
+        ctx.font = isH ? 'bold 7.5px monospace' : '6.5px monospace';
+        ctx.fillStyle = isH ? '#1f3850' : 'rgba(31,56,80,0.9)';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(faceLabel(FNORMS[i]), cx2, cy2);
+      }
+    });
+
+    ctx.beginPath(); ctx.arc(CX,CY,SCALE+5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(212,169,58,0.28)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  function hitTest(mx,my) {
+    const theta=spherical.theta,phi=spherical.phi;
+    const cosT=Math.cos(theta),sinT=Math.sin(theta),cosP=Math.cos(phi),sinP=Math.sin(phi);
+    const pv=VERTS.map(v=>proj(v,cosT,sinT,cosP,sinP));
+    return FACES.map((fi,i)=>{
+      const vp=fi.map(vi=>pv[vi]);
+      const cz=vp.reduce((s,p)=>s+p[2],0)/5;
+      const np=proj(FNORMS[i],cosT,sinT,cosP,sinP);
+      return{i,vp,cz,facing:-np[2]};
+    }).filter(f=>f.facing>0).sort((a,b)=>b.cz-a.cz)
+      .find(({i,vp})=>{
+        const pts=vp.map(([px,py])=>[CX+px*SCALE,CY-py*SCALE]);
+        return ptInPoly(mx,my,pts);
+      })?.i ?? -1;
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const r=canvas.getBoundingClientRect();
+    const mx=(e.clientX-r.left)*(W/r.width), my=(e.clientY-r.top)*(H/r.height);
+    if(drag){ drag.lastX=e.clientX; drag.lastY=e.clientY; drag.moved=true;
+      sphericalTarget.theta -= (e.clientX-drag.prevX)*0.012;
+      sphericalTarget.phi = Math.max(0.1,Math.min(Math.PI-0.1, sphericalTarget.phi+(e.clientY-drag.prevY)*0.012));
+      drag.prevX=e.clientX; drag.prevY=e.clientY;
+      return;
+    }
+    const prev=hovered; hovered=hitTest(mx,my);
+    if(hovered!==prev) lbl.textContent=hovered>=0?faceLabel(FNORMS[hovered]):'';
+  });
+
+  canvas.addEventListener('mousedown', e => {
+    e.stopPropagation(); e.preventDefault();
+    drag={prevX:e.clientX,prevY:e.clientY,moved:false,startFace:hovered};
+    canvas.style.cursor='grabbing';
+  });
+
+  window.addEventListener('mouseup', e => {
+    if(!drag) return;
+    if(!drag.moved && drag.startFace>=0){
+      const [nx,ny,nz]=FNORMS[drag.startFace];
+      const newPhi=Math.acos(Math.max(-1,Math.min(1,ny)));
+      const sinP=Math.sin(newPhi);
+      const newTheta=sinP<0.001?0:Math.atan2(nx,nz);
+      scenePosTarget.set(0,0,0);
+      sphericalTarget.theta  = newTheta;
+      sphericalTarget.phi    = newPhi;
+    }
+    drag=null; canvas.style.cursor='pointer';
+  });
+
+  canvas.addEventListener('mouseleave',()=>{ hovered=-1; lbl.textContent=''; });
+
+  return { draw };
+})();
+} catch (e) {
+  console.error('Dodec gizmo init failed — using no-op fallback:', e);
+  dodecGizmo = { draw: () => {} };
+}
 
 // ============================================================================
 // Fit View — frame all (or selected) objects
@@ -3617,12 +4561,33 @@ function fitView() {
   const size = bbox.getSize(new THREE.Vector3());
   const maxDim = Math.max(size.x, size.y, size.z);
   const fitR = Math.max(4, maxDim * 2.2);
-  spherical.radius = fitR;
+  sphericalTarget.radius = fitR;
   // Move scene so the focus point becomes the origin (camera looks at origin)
-  scene.position.set(-center.x, -center.y, -center.z);
-  updateCamera();
+  scenePosTarget.set(-center.x, -center.y, -center.z);
 }
 document.getElementById('btn-fit-view').addEventListener('click', fitView);
+
+// ── Drop selected to plane: shift each selected object down so its bottom
+// face sits exactly on y=0. Works on multi-selection too. ──
+document.getElementById('btn-drop-floor').addEventListener('click', () => {
+  const targets = selectedSet.size > 0 ? [...selectedSet] : [];
+  if (targets.length === 0) { showToast('Select a shape to drop'); return; }
+  targets.forEach(o => {
+    // Hide the edge overlay during measurement so it doesn't influence bbox.
+    const eo = o.userData.edgeOverlay;
+    if (eo) eo.visible = false;
+    o.updateMatrixWorld(true);
+    const bb = new THREE.Box3().setFromObject(o);
+    if (eo) eo.visible = true;
+    o.position.y -= bb.min.y;   // bottom → 0
+  });
+  if (selected) {
+    updatePropsFromSelected();
+    updateGizmo();
+  }
+  pushUndo();
+  showToast(targets.length > 1 ? `Dropped ${targets.length} objects` : 'Dropped to plane');
+});
 
 // ============================================================================
 // Smart Duplicate — Ctrl+D. Repeating Ctrl+D applies the last move/transform.
@@ -4055,15 +5020,18 @@ function finalizeImported(positions, normals, filename) {
   } else {
     geo.computeVertexNormals();
   }
-  // Auto-scale so the longest dimension is ~3 units, and seat on floor
+  // Preserve real file dimensions (STL/OBJ are typically already in mm for
+  // 3D printing). Center horizontally on the plane and sit on the floor —
+  // do NOT auto-scale, so a 50 mm model imports as 50 mm.
   geo.computeBoundingBox();
   const size = geo.boundingBox.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z) || 1;
-  const scale = 3 / maxDim;
-  geo.scale(scale, scale, scale);
-  geo.computeBoundingBox();
   const bb = geo.boundingBox;
   geo.translate(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  // If the model is larger than the working plane, warn but keep its scale.
+  const maxDim = Math.max(size.x, size.y, size.z);
+  if (maxDim > 200) {
+    showToast(`Imported at ${maxDim.toFixed(0)} mm — larger than the 200 mm plane`);
+  }
 
   const colorHex = '#22d3ee';
   const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(colorHex), roughness: 0.5, metalness: 0.1 });
@@ -4088,6 +5056,142 @@ function finalizeImported(positions, normals, filename) {
   showToast(`Imported ${filename}`);
   fitView();
 }
+
+// ============================================================================
+// Order flow — Stripe Checkout via Netlify function
+// ============================================================================
+// Where the backend lives. Relative path works when site and function are on
+// the same Netlify domain. If the site moves to a different host, change to
+// an absolute URL like 'https://chic-profiterole-c19ea8.netlify.app/.netlify/functions/order'.
+const ORDER_API = '/.netlify/functions/order';
+
+// Pricing — MUST match the constants in netlify/functions/order.js so the
+// estimate shown to the user matches what they're charged.
+const PRICE = {
+  setup:   4.00,   // flat per-order setup
+  perCm3:  1.00,   // material + labor estimate
+  shipping:5.00,   // ground placeholder
+  min:     10.00,  // minimum print line
+};
+
+// Volume of all solid (non-hole) objects in cm³, using signed-tetrahedron sum
+// so the math works regardless of how shapes were created or rotated.
+function computeTotalVolumeCm3() {
+  const solids = objects.filter(o => !o.userData.isHole);
+  let totalMm3 = 0;
+  const v0 = new THREE.Vector3(), v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
+  solids.forEach(o => {
+    const g = o.geometry;
+    if (!g || !g.attributes || !g.attributes.position) return;
+    const pos = g.attributes.position.array;
+    const idx = g.index ? g.index.array : null;
+    o.updateMatrixWorld(true);
+    const mat = o.matrixWorld;
+    const triCount = idx ? idx.length / 3 : (pos.length / 9);
+    for (let i = 0; i < triCount; i++) {
+      const a = idx ? idx[i*3]   : i*3;
+      const b = idx ? idx[i*3+1] : i*3+1;
+      const c = idx ? idx[i*3+2] : i*3+2;
+      v0.set(pos[a*3], pos[a*3+1], pos[a*3+2]).applyMatrix4(mat);
+      v1.set(pos[b*3], pos[b*3+1], pos[b*3+2]).applyMatrix4(mat);
+      v2.set(pos[c*3], pos[c*3+1], pos[c*3+2]).applyMatrix4(mat);
+      totalMm3 += v0.dot(v1.clone().cross(v2)) / 6;
+    }
+  });
+  return Math.abs(totalMm3) / 1000;
+}
+
+function openOrderModal() {
+  const solids = objects.filter(o => !o.userData.isHole);
+  if (solids.length === 0) {
+    showToast('Add at least one shape before ordering');
+    return;
+  }
+  const bb = new THREE.Box3();
+  solids.forEach(o => { o.updateMatrixWorld(true); bb.expandByObject(o); });
+  const size = bb.getSize(new THREE.Vector3());
+  const volumeCm3 = computeTotalVolumeCm3();
+  const weightG   = volumeCm3 * 1.24;   // PLA density
+  const printPrice = Math.max(PRICE.min, PRICE.setup + volumeCm3 * PRICE.perCm3);
+  const totalPrice = printPrice + PRICE.shipping;
+
+  document.getElementById('om-size').textContent   = `${size.x.toFixed(1)} × ${size.y.toFixed(1)} × ${size.z.toFixed(1)} mm`;
+  document.getElementById('om-volume').textContent = `${volumeCm3.toFixed(2)} cm³`;
+  document.getElementById('om-weight').textContent = `${weightG.toFixed(1)} g`;
+  document.getElementById('om-print').textContent  = `$${printPrice.toFixed(2)}`;
+  document.getElementById('om-ship').textContent   = `$${PRICE.shipping.toFixed(2)}`;
+  document.getElementById('om-price').textContent  = `$${totalPrice.toFixed(2)}`;
+
+  // Stash the computed volume for the submit handler
+  document.getElementById('om-order').dataset.volume = volumeCm3.toFixed(4);
+
+  document.getElementById('order-modal').classList.add('show');
+}
+
+function closeOrderModal() {
+  document.getElementById('order-modal').classList.remove('show');
+}
+
+document.getElementById('btn-order').addEventListener('click', openOrderModal);
+document.getElementById('om-cancel').addEventListener('click', closeOrderModal);
+document.getElementById('om-close').addEventListener('click', closeOrderModal);
+document.getElementById('order-modal').addEventListener('click', (e) => {
+  // click on the dim background (not the card) to close
+  if (e.target.id === 'order-modal') closeOrderModal();
+});
+// Esc key closes the modal
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('order-modal').classList.contains('show')) {
+    closeOrderModal();
+  }
+});
+
+document.getElementById('om-order').addEventListener('click', async () => {
+  const btn = document.getElementById('om-order');
+  const email = document.getElementById('om-email').value.trim();
+  const material = document.getElementById('om-material').value;
+  const volumeCm3 = parseFloat(btn.dataset.volume) || 0;
+  if (!email || !email.includes('@')) {
+    showToast('Please enter a valid email');
+    return;
+  }
+  const origText = btn.textContent;
+  btn.textContent = 'Connecting to Stripe…';
+  btn.disabled = true;
+  try {
+    const res = await fetch(ORDER_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, material, volumeCm3, designName: 'CloudForge design' }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.checkoutUrl) {
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
+    // Redirect the browser to Stripe's hosted payment page
+    window.location.href = data.checkoutUrl;
+  } catch (err) {
+    console.error(err);
+    showToast('Order failed: ' + err.message);
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+});
+
+// Show a status toast when Stripe redirects the user back after payment
+(function handlePostCheckout() {
+  const q = new URLSearchParams(window.location.search);
+  const state = q.get('ordered');
+  if (state === 'success') {
+    setTimeout(() => showToast('Order confirmed — check your email for tracking'), 600);
+  } else if (state === 'cancel') {
+    setTimeout(() => showToast('Order canceled — your design is safe'), 600);
+  }
+  if (state) {
+    // Clean the URL so a reload doesn't re-show the toast
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
 
 // ── STL Export ──
 document.getElementById('btn-export').addEventListener('click', exportSTL);
@@ -4176,8 +5280,10 @@ function drawAxes() {
 
 // ── Resize ──
 function resize() {
-  const w = viewport.clientWidth;
-  const h = viewport.clientHeight;
+  // Canvas now fills the whole window as a background layer, so size to the
+  // window, not the viewport flex slot.
+  const w = window.innerWidth;
+  const h = window.innerHeight;
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -4188,9 +5294,11 @@ resize();
 // ── Render loop ──
 function animate() {
   requestAnimationFrame(animate);
-  updateSky(); // re-center sky on camera + drift clouds before render
+  dampCamera();   // smooth-follow the camera toward its target each frame
+  updateSky();    // re-center sky on camera + drift clouds before render
   renderer.render(scene, camera);
   drawAxes();
+  dodecGizmo.draw();
   if (selected) {
     updatePropsFromSelected();
     if (gizmo.visible) updateGizmo();

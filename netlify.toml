@@ -1,0 +1,25 @@
+# Netlify config — static HTML + serverless functions
+[build]
+  # The site is a single index.html in the repo root
+  publish = "."
+  # Functions live under netlify/functions/
+  functions = "netlify/functions"
+
+[functions]
+  # Use esbuild for fast, lean function bundles
+  node_bundler = "esbuild"
+
+# ── Long-term browser caching for the big sky HDRI ───────────────────────
+# The sky file is large and never changes per deploy, so let the browser
+# keep it for a year. First visit downloads it, every subsequent visit
+# (including reloads) reads it from disk in <10ms.
+[[headers]]
+  for = "/sky.exr"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Same idea for anything else .exr we might add later
+[[headers]]
+  for = "/*.exr"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
