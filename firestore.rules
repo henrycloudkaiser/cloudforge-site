@@ -1,0 +1,56 @@
+// Firebase Firestore Security Rules — Cloud Forge
+//
+// HOW TO INSTALL:
+//   1. Go to https://console.firebase.google.com → your "cloudforge" project
+//   2. Left sidebar → Firestore Database → Rules tab
+//   3. Replace ALL existing rule text with the contents of this file
+//   4. Click Publish
+//
+// WHAT THIS DOES:
+//   • Locks Firestore so a user can read/write ONLY their own data
+//   • Prevents anyone (including signed-in users) from listing all users
+//   • Caps document sizes to prevent storage abuse
+//   • Public read on /catalog (for things like featured designs); admin-only writes
+//
+// AFTER FIRST INSTALL: this kills the "test mode" wide-open rules. Test thoroughly.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── User profile / settings ───────────────────────────────────────────
+    // Each user document lives at /users/{their-uid}
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // No listing all users — only direct doc reads
+    }
+
+    // ─── A user's saved designs ────────────────────────────────────────────
+    // Path: /users/{uid}/designs/{designId}
+    match /users/{userId}/designs/{designId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId
+                         // Cap design payload at 1 MB to prevent abuse
+                         && request.resource.data.size() < 1048576;
+    }
+
+    // ─── A user's orders (read-only from client; written by trusted backend) ──
+    match /users/{userId}/orders/{orderId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Orders are created by a server-side function with admin SDK,
+      // never directly from the browser → no write access from clients.
+      allow write: if false;
+    }
+
+    // ─── Public catalog (featured designs, etc.) ───────────────────────────
+    match /catalog/{designId} {
+      allow read: if true;                  // anyone can browse
+      allow write: if false;                // only the admin SDK writes
+    }
+
+    // ─── Default deny: anything else is locked down ────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

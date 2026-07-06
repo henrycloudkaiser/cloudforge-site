@@ -9,6 +9,37 @@
   # Use esbuild for fast, lean function bundles
   node_bundler = "esbuild"
 
+# ── Security headers applied to every response ──────────────────────────────
+# These are the standard hardening headers most modern audit tools check for.
+# Tested to be permissive enough that Stripe Checkout, Firebase Auth, and the
+# Three.js CDN all keep working — but tight enough that random scripts can't
+# inject themselves.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Force HTTPS for 2 years and include subdomains. Browser will refuse HTTP.
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # MIME-sniffing protection — browsers must respect declared Content-Type.
+    X-Content-Type-Options = "nosniff"
+
+    # Block your site from being embedded in someone else's iframe (clickjacking).
+    X-Frame-Options = "DENY"
+
+    # Modern equivalent of X-Frame-Options + cross-origin policies.
+    Cross-Origin-Opener-Policy = "same-origin"
+
+    # Don't leak the full referring URL to third parties (privacy hardening).
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # Lock down browser APIs we don't use — site can't request mic, camera,
+    # geolocation, etc., even if some script tried to.
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=(self), usb=(), magnetometer=(), accelerometer=(), gyroscope=()"
+
+    # Content Security Policy — the big one. Whitelists everything we ACTUALLY
+    # use, blocks anything else (XSS injections, evil third-party scripts).
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com https://*.firebaseio.com https://*.googleapis.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.stripe.com https://*.stripe.com https://*.googleapis.com https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://dl.polyhaven.org; worker-src 'self' blob:; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
+
 # ── Long-term browser caching for the big sky HDRI ───────────────────────
 # The sky file is large and never changes per deploy, so let the browser
 # keep it for a year. First visit downloads it, every subsequent visit

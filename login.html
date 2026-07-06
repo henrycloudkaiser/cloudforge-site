@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>Sign In — Cloud Forge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #f1f7fc;
+    --sail: #1f3850;
+    --mist: #6b85a0;
+    --rope: #d4a93a;
+    --rope-2: #b8902a;
+    --sky-2: #2a6a9a;
+    --coral: #c05540;
+    --hull: #d9e8f3;
+    --display: 'Fraunces', Georgia, serif;
+    --font: 'DM Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    color: var(--sail);
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, #cfdfeb 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(212,169,58,0.18) 0%, transparent 60%),
+      linear-gradient(180deg, #b0d2eb 0%, #dceaf3 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  [data-theme="dark"] body {
+    background: linear-gradient(180deg, #02050d 0%, #0a1525 70%, #02050d 100%);
+    color: #e5edf5;
+  }
+
+  /* ── Brand header ── */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brand svg { width: 80px; height: 52px; }
+  .brand-name {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  /* ── Auth card ── */
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--rope);
+    border-radius: 10px;
+    padding: 36px 36px 28px;
+    box-shadow: 0 10px 40px rgba(31,56,80,0.15);
+  }
+  [data-theme="dark"] .auth-card {
+    background: rgba(20, 35, 55, 0.95);
+    border-color: rgba(212,169,58,0.5);
+    color: #e5edf5;
+  }
+  .auth-tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid rgba(212,169,58,0.4); }
+  .auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px 4px 12px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mist);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .auth-tab:hover { color: var(--sail); }
+  [data-theme="dark"] .auth-tab:hover { color: #e5edf5; }
+  .auth-tab.active { color: var(--sail); border-bottom-color: var(--rope); }
+  [data-theme="dark"] .auth-tab.active { color: #e5edf5; }
+
+  .auth-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .auth-sub { font-size: 13px; color: var(--mist); margin-bottom: 22px; }
+
+  .form-row { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--mist);
+    margin-bottom: 4px;
+    font-family: var(--mono);
+  }
+  .form-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid var(--rope);
+    background: rgba(255,255,255,0.7);
+    border-radius: 5px;
+    padding: 0 12px;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--sail);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  [data-theme="dark"] .form-input {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(212,169,58,0.4);
+    color: #e5edf5;
+  }
+  .form-input:focus { border-color: var(--sky-2); }
+
+  .btn-primary {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(135deg, var(--sky-2) 0%, var(--rope-2) 100%);
+    color: #fff;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(58,126,176,0.4); }
+  .btn-primary:disabled { opacity: 0.6; cursor: wait; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--mist);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-family: var(--mono);
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(212,169,58,0.3);
+  }
+
+  .btn-google {
+    width: 100%;
+    height: 44px;
+    border: 1px solid var(--rope);
+    background: #fff;
+    color: var(--sail);
+    border-radius: 5px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.15s;
+  }
+  .btn-google:hover { background: var(--hull); }
+  [data-theme="dark"] .btn-google { background: rgba(255,255,255,0.12); color: #e5edf5; }
+  [data-theme="dark"] .btn-google:hover { background: rgba(255,255,255,0.20); }
+
+  .guest-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--mist);
+    text-decoration: none;
+  }
+  .guest-link:hover { color: var(--sky-2); }
+
+  .auth-error {
+    background: rgba(192,85,64,0.12);
+    border: 1px solid var(--coral);
+    color: var(--coral);
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .auth-error.show { display: block; }
+
+  /* Footer */
+  .legal-strip {
+    margin-top: 28px;
+    font-size: 11.5px;
+    color: var(--mist);
+    text-align: center;
+  }
+  .legal-strip a { color: var(--mist); margin: 0 8px; text-decoration: none; }
+  .legal-strip a:hover { color: var(--sky-2); }
+  [data-theme="dark"] .legal-strip { color: rgba(229,237,245,0.6); }
+  [data-theme="dark"] .legal-strip a { color: rgba(229,237,245,0.7); }
+
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--rope);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  [data-theme="dark"] .theme-toggle { background: rgba(20,35,55,0.85); color: #e5edf5; }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">☾</button>
+
+<a href="home.html" class="brand" aria-label="Cloud Forge — back to homepage" title="Back to homepage">
+  <svg viewBox="0 0 100 64" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(75, 22)">
+      <path d="M 13.73 -2.73 L 17.66 -3.51 L 17.66 3.51 L 13.73 2.73
+               L 11.64 7.78 L 14.97 10 L 10 14.97 L 7.78 11.64
+               L 2.73 13.73 L 3.51 17.66 L -3.51 17.66 L -2.73 13.73
+               L -7.78 11.64 L -10 14.97 L -14.97 10 L -11.64 7.78
+               L -13.73 2.73 L -17.66 3.51 L -17.66 -3.51 L -13.73 -2.73
+               L -11.64 -7.78 L -14.97 -10 L -10 -14.97 L -7.78 -11.64
+               L -2.73 -13.73 L -3.51 -17.66 L 3.51 -17.66 L 2.73 -13.73
+               L 7.78 -11.64 L 10 -14.97 L 14.97 -10 L 11.64 -7.78 Z"
+            fill="#f5a14e" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle r="4" fill="#fff" stroke="#000" stroke-width="2"/>
+    </g>
+    <path d="M 14 52 C 4 52, 2 38, 12 35 C 12 24, 26 18, 34 26 C 39 18, 56 18, 61 26 C 70 22, 82 28, 82 38 C 92 39, 92 52, 82 52 L 14 52 Z"
+          fill="#fff" stroke="#000" stroke-width="3.4" stroke-linejoin="round"/>
+  </svg>
+  <span class="brand-name">Cloud Forge</span>
+</a>
+
+<div class="auth-card">
+  <div class="auth-tabs">
+    <button class="auth-tab active" data-tab="signin">Sign In</button>
+    <button class="auth-tab" data-tab="signup">Create Account</button>
+  </div>
+
+  <!-- Sign In panel -->
+  <div class="auth-panel" id="panel-signin">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to access your designs.</p>
+    <div class="auth-error" id="signin-error"></div>
+    <form id="signin-form">
+      <div class="form-row">
+        <label class="form-label" for="signin-email">Email</label>
+        <input class="form-input" id="signin-email" type="email" autocomplete="email" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="signin-password">Password</label>
+        <input class="form-input" id="signin-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn-primary" type="submit">Sign In</button>
+    </form>
+    <div class="divider">or</div>
+    <button class="btn-google" id="signin-google">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+  </div>
+
+  <!-- Sign Up panel -->
+  <div class="auth-panel" id="panel-signup" hidden>
+    <h1 class="auth-title">Create an account</h1>
+    <p class="auth-sub">Save designs across devices, place orders, and pick up where you left off.</p>
+    <div class="auth-error" id="signup-error"></div>
+    <form id="signup-form">
+      <div class="form-row">
+        <label class="form-label" for="signup-name">Display name</label>
+        <input class="form-input" id="signup-name" type="text" autocomplete="name" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="signup-email">Email</label>
+        <input class="form-input" id="signup-email" type="email" autocomplete="email" required>
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="signup-password">Password (8+ characters)</label>
+        <input class="form-input" id="signup-password" type="password" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button class="btn-primary" type="submit">Create Account</button>
+    </form>
+    <p style="font-size: 11.5px; color: var(--mist); margin-top: 14px; text-align: center;">
+      By creating an account you agree to our
+      <a href="terms.html" style="color: var(--sky-2);">Terms</a> and
+      <a href="privacy.html" style="color: var(--sky-2);">Privacy Policy</a>.
+    </p>
+  </div>
+
+  <a href="/?guest=1" class="guest-link">Continue as guest → editor only, designs won't be saved</a>
+</div>
+
+<footer class="legal-strip">
+  © 2026 Cloud Forge ·
+  <a href="terms.html">Terms</a> ·
+  <a href="privacy.html">Privacy</a> ·
+  <a href="refunds.html">Refunds</a>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQCfRrt8QBCtvm1CwjDQyIHsguG1rhl_I",
+    authDomain: "cloudforge-370e1.firebaseapp.com",
+    projectId: "cloudforge-370e1",
+    storageBucket: "cloudforge-370e1.firebasestorage.app",
+    messagingSenderId: "258704204607",
+    appId: "1:258704204607:web:91a08a59be1f6eb745698a"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // ── Tab switching ──
+  document.querySelectorAll('.auth-tab').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('panel-signin').hidden = (b.dataset.tab !== 'signin');
+      document.getElementById('panel-signup').hidden = (b.dataset.tab !== 'signup');
+    });
+  });
+
+  // ── Sign in form ──
+  document.getElementById('signin-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = document.getElementById('signin-error');
+    err.classList.remove('show');
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        document.getElementById('signin-email').value.trim(),
+        document.getElementById('signin-password').value
+      );
+      window.location.href = 'dashboard.html';
+    } catch (e) {
+      err.textContent = friendlyError(e.code);
+      err.classList.add('show');
+    }
+  });
+
+  // ── Sign up form ──
+  document.getElementById('signup-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = document.getElementById('signup-error');
+    err.classList.remove('show');
+    try {
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        document.getElementById('signup-email').value.trim(),
+        document.getElementById('signup-password').value
+      );
+      const name = document.getElementById('signup-name').value.trim();
+      if (name) await updateProfile(cred.user, { displayName: name });
+      window.location.href = 'dashboard.html';
+    } catch (e) {
+      err.textContent = friendlyError(e.code);
+      err.classList.add('show');
+    }
+  });
+
+  // ── Google sign in ──
+  document.getElementById('signin-google').addEventListener('click', async () => {
+    const err = document.getElementById('signin-error');
+    err.classList.remove('show');
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+      window.location.href = 'dashboard.html';
+    } catch (e) {
+      err.textContent = friendlyError(e.code);
+      err.classList.add('show');
+    }
+  });
+
+  // ── If already signed in, redirect straight to dashboard ──
+  onAuthStateChanged(auth, user => { if (user) window.location.href = 'dashboard.html'; });
+
+  // ── Theme toggle (persists via localStorage) ──
+  const setTheme = (t) => {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('theme-toggle').textContent = t === 'dark' ? '☀' : '☾';
+    try { localStorage.setItem('cf-theme', t); } catch(_) {}
+  };
+  try {
+    const saved = localStorage.getItem('cf-theme');
+    if (saved) setTheme(saved);
+  } catch(_) {}
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  function friendlyError(code) {
+    const map = {
+      'auth/invalid-email':              'That email doesn\'t look right.',
+      'auth/user-disabled':              'This account has been disabled.',
+      'auth/user-not-found':             'No account with that email — try creating one instead.',
+      'auth/wrong-password':             'Wrong password — try again.',
+      'auth/invalid-credential':         'Email and password don\'t match.',
+      'auth/email-already-in-use':       'That email already has an account — try signing in.',
+      'auth/weak-password':              'Password must be at least 8 characters.',
+      'auth/popup-closed-by-user':       'Sign-in popup closed before finishing.',
+      'auth/network-request-failed':     'Network error — check your connection.',
+    };
+    return map[code] || 'Something went wrong. Please try again.';
+  }
+</script>
+
+</body>
+</html>

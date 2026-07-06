@@ -1,0 +1,98 @@
+/* Shared layout for all legal pages — minimal, readable, brand-matched. */
+:root {
+  --ink: #f1f7fc;
+  --sail: #1f3850;
+  --mist: #6b85a0;
+  --rope: #d4a93a;
+  --sky-2: #2a6a9a;
+  --coral: #c05540;
+  --display: 'Fraunces', Georgia, serif;
+  --font: 'DM Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--ink);
+  color: var(--sail);
+  line-height: 1.7;
+  margin: 0;
+  padding: 48px 24px 96px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.legal-header {
+  border-bottom: 2px solid var(--rope);
+  padding-bottom: 18px;
+  margin-bottom: 32px;
+}
+.legal-header a.brand {
+  text-decoration: none;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sail);
+}
+.legal-header .nav { float: right; }
+.legal-header .nav a {
+  color: var(--mist);
+  font-size: 13px;
+  margin-left: 18px;
+  text-decoration: none;
+}
+.legal-header .nav a:hover { color: var(--sky-2); }
+h1 {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin: 24px 0 6px;
+}
+.effective {
+  color: var(--mist);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+h2 {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 36px 0 12px;
+  color: var(--sail);
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+  color: var(--sail);
+}
+p, li { font-size: 15px; }
+li { margin-bottom: 8px; }
+a { color: var(--sky-2); }
+code, .mono { font-family: var(--mono); font-size: 13px; background: rgba(212,169,58,0.12); padding: 1px 6px; border-radius: 3px; }
+.callout {
+  background: rgba(212,169,58,0.10);
+  border-left: 3px solid var(--rope);
+  padding: 14px 18px;
+  margin: 22px 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+}
+.callout.warn { background: rgba(192,85,64,0.10); border-left-color: var(--coral); }
+hr { border: 0; border-top: 1px solid var(--rope); margin: 40px 0; opacity: 0.4; }
+.legal-footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rope);
+  font-size: 12px;
+  color: var(--mist);
+  text-align: center;
+}
+.legal-footer a { color: var(--mist); margin: 0 10px; }
+@media (max-width: 600px) {
+  body { padding: 28px 18px 60px; }
+  .legal-header .nav a { margin-left: 10px; font-size: 12px; }
+  h1 { font-size: 28px; }
+}

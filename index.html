@@ -48,6 +48,36 @@
     --font: 'DM Sans', system-ui, sans-serif;
     --display: 'Fraunces', Georgia, serif;
     --mono: 'JetBrains Mono', monospace;
+
+    /* RGB triplets for translucent panel backgrounds — these are what
+       every glass panel pulls from, so dark-mode just overrides this one
+       value and everything restains automatically. */
+    --panel-rgb: 215, 232, 245;
+    --shadow-strong: rgba(31, 56, 80, 0.18);
+  }
+
+  /* ─── Dark theme — deep navy + light cream text, gold accents preserved ── */
+  [data-theme="dark"] {
+    --ink:    #0a1525;   /* page bg — deep navy */
+    --deep:   #112340;   /* topbar / sidebars */
+    --hull:   #1a2c4d;   /* buttons */
+    --hull-2: #233863;   /* button hover */
+    --rope:   #d4a93a;   /* gold borders (brand color, kept) */
+    --rope-2: #f0c050;   /* border hover — lifted gold for contrast */
+    --sky:    #5a9bcb;   /* accent blue, lighter so it pops on dark */
+    --sky-2:  #7eb4d8;
+    --brass:  #d4a93a;
+    --brass-2:#f0c050;
+    --coral:  #e07a65;
+    --coral-2:#c5604a;
+    --seafoam:#6cb59f;
+    --sail:   #f1f5fa;   /* light text on dark bg */
+    --sail-2: #d4dde8;
+    --mist:   #8aa0bd;
+    --on-brass: #1f1408;
+
+    --panel-rgb: 14, 26, 48;
+    --shadow-strong: rgba(0, 0, 0, 0.45);
   }
 
   body {
@@ -63,7 +93,7 @@
   /* ── Top Bar ── */
   #topbar {
     height: 56px;
-    background: rgba(215, 232, 245, 0.24);
+    background: rgba(var(--panel-rgb), 0.24);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--rope);
@@ -94,33 +124,37 @@
     height: 100%;
   }
 
-  /* Centered logo — cloud icon with gear peeking out + wordmark beside it */
+  /* Centered logo — cloud icon with gear peeking out + wordmark beside it.
+     The whole thing is a link back to the homepage. */
   #cloud-logo {
     display: flex;
     align-items: center;
     gap: 9px;
     height: 100%;
-    pointer-events: none;
     user-select: none;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  #cloud-logo:hover { transform: translateY(-1px); }
+  #cloud-logo:hover .logo-icon { filter: drop-shadow(0 4px 10px rgba(212,169,58,0.45)); }
+  #cloud-logo:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 4px;
+    border-radius: 6px;
   }
   #cloud-logo .logo-icon {
-    width: 44px;
-    height: 28px;
+    width: 54px;
+    height: 36px;
     filter: drop-shadow(0 2px 5px rgba(31,56,80,0.22));
     flex-shrink: 0;
+    transition: filter 0.15s ease;
   }
-  #cloud-logo-text {
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 20px;
-    letter-spacing: -0.3px;
-    color: var(--sail);
-    line-height: 1;
-  }
-  #cloud-logo-text em {
-    font-style: italic;
-    font-weight: 500;
-    color: var(--coral-2);
+  /* In dark mode keep the cloud's white fill but soften the drop-shadow
+     so the logo doesn't look like it was cut out of a sticker sheet. */
+  [data-theme="dark"] #cloud-logo .logo-icon {
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.20));
   }
 
   .top-divider {
@@ -160,6 +194,20 @@
   .top-btn.order-btn { background: #2d8a4e; border-color: #236b3c; color: #fff; font-weight: 600; }
   .top-btn.order-btn:hover { background: #236b3c; border-color: #1a5230; color: #fff; }
 
+  /* Theme toggle — shows the icon for what you'll get if you click it */
+  .top-btn.theme-toggle {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+    color: var(--brass-2);
+    font-size: 14px;
+  }
+  .top-btn.theme-toggle:hover { color: var(--brass); background: var(--hull); }
+  .theme-toggle .theme-icon-sun  { display: none; }
+  .theme-toggle .theme-icon-moon { display: inline; }
+  [data-theme="dark"] .theme-toggle .theme-icon-sun  { display: inline; }
+  [data-theme="dark"] .theme-toggle .theme-icon-moon { display: none; }
+
   #btn-home {
     display: inline-flex;
     align-items: center;
@@ -189,10 +237,359 @@
     flex-shrink: 0;
   }
 
+  /* ── App tabs (Editor · Syntax³ · Parts) ── */
+  #app-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    padding: 0 16px;
+    height: 38px;
+    background: rgba(var(--panel-rgb), 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212,169,58,0.35);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 11;
+  }
+  .app-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    padding: 0 18px;
+    border: none;
+    background: transparent;
+    color: var(--mist);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    position: relative;
+    letter-spacing: 0.2px;
+  }
+  .app-tab:hover:not(:disabled) { color: var(--sail); background: rgba(255,255,255,0.18); }
+  .app-tab.active {
+    color: var(--sail);
+    border-bottom-color: var(--brass);
+    background: rgba(255,255,255,0.28);
+  }
+  .app-tab:disabled { opacity: 0.45; cursor: not-allowed; }
+  .app-tab .tab-icon {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--brass-2);
+    font-weight: 600;
+  }
+  .app-tab sup { font-size: 0.65em; }
+  .app-tab .tab-soon {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    background: rgba(192,85,64,0.15);
+    color: var(--coral-2);
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .tab-badge {
+    display: none;
+    font-size: 10px;
+    background: var(--coral);
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 9px;
+    margin-left: 4px;
+    min-width: 16px;
+    text-align: center;
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+  .tab-badge.show { display: inline-block; }
+  .tab-badge.warn { background: var(--brass); color: var(--on-brass); }
+  .tab-badge.pass { background: var(--seafoam); }
+
+  /* When NOT on the editor tab, hide the editor-only chrome */
+  body.tab-syntax #tool-toolbar,
+  body.tab-syntax #main,
+  body.tab-syntax #bottom-bar,
+  body.tab-parts  #tool-toolbar,
+  body.tab-parts  #main,
+  body.tab-parts  #bottom-bar { display: none; }
+  body.tab-editor #syntax-view,
+  body.tab-editor #parts-view { display: none; }
+  body.tab-syntax #syntax-view { display: flex; flex: 1; flex-direction: column; }
+  body.tab-syntax #parts-view  { display: none; }
+  body.tab-parts  #syntax-view { display: none; }
+  body.tab-parts  #parts-view  { display: flex; flex: 1; flex-direction: column; }
+
+  /* ── Syntax³ view layout ─────────────────────────────────────────────── */
+  .tab-view { background: var(--ink); flex: 1; min-height: 0; }
+  .sx-shell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--sail);
+    background:
+      radial-gradient(circle at 20% 0%, rgba(58,126,176,0.10) 0%, transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(212,169,58,0.08) 0%, transparent 50%),
+      #f1f7fc;
+  }
+  .sx-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 36px;
+    border-bottom: 1px solid var(--rope);
+    background: rgba(255,255,255,0.55);
+  }
+  .sx-brand { display: flex; align-items: center; gap: 18px; }
+  .sx-mark {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--sky-2);
+    line-height: 1;
+    background: rgba(58,126,176,0.12);
+    border: 1px solid rgba(58,126,176,0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    letter-spacing: -1px;
+  }
+  .sx-mark sup { font-size: 0.55em; vertical-align: top; }
+  .sx-brand h1 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--sail);
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+  }
+  .sx-brand p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mist);
+    letter-spacing: 0.4px;
+  }
+  .sx-run-btn {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-2) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(58,126,176,0.35);
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .sx-run-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(58,126,176,0.45); }
+  .sx-run-btn:active { transform: translateY(0); }
+  .sx-run-btn:disabled { background: var(--mist); cursor: wait; box-shadow: none; transform: none; }
+  .sx-run-glyph { font-size: 16px; }
+  .sx-run-btn.scanning .sx-run-glyph { animation: sxSpin 0.9s linear infinite; }
+  @keyframes sxSpin { to { transform: rotate(360deg); } }
+
+  .sx-body {
+    flex: 1;
+    display: flex;
+    gap: 1px;
+    background: var(--rope);
+    min-height: 0;
+    overflow: hidden;
+  }
+  .sx-left {
+    width: 280px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.7);
+    padding: 22px 22px 18px;
+    overflow-y: auto;
+  }
+  .sx-section { margin-bottom: 22px; }
+  .sx-section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--mist);
+    margin-bottom: 10px;
+  }
+  .sx-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px dashed rgba(212,169,58,0.3);
+    font-size: 12.5px;
+  }
+  .sx-summary-row span:first-child { color: var(--mist); }
+  .sx-summary-row span:last-child  { font-family: var(--mono); color: var(--sail); }
+
+  .sx-score {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--rope);
+    background: rgba(255,255,255,0.6);
+  }
+  .sx-score-ring {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    border: 3px solid var(--mist);
+    color: var(--mist);
+    background: rgba(255,255,255,0.7);
+  }
+  .sx-score-label { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .sx-score-sub   { font-size: 11.5px; color: var(--mist); }
+  .sx-score.pass .sx-score-ring  { border-color: var(--seafoam); color: var(--seafoam); }
+  .sx-score.pass .sx-score-label { color: var(--seafoam); }
+  .sx-score.warn .sx-score-ring  { border-color: var(--brass-2); color: var(--brass-2); }
+  .sx-score.warn .sx-score-label { color: var(--brass-2); }
+  .sx-score.fail .sx-score-ring  { border-color: var(--coral); color: var(--coral); }
+  .sx-score.fail .sx-score-label { color: var(--coral); }
+
+  .sx-right {
+    flex: 1;
+    background: rgba(255,255,255,0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sx-issues-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--rope);
+    background: rgba(247,251,254,0.7);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--mist);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .sx-counts { font-size: 11px; letter-spacing: 0.5px; }
+  .sx-counts .c { display: inline-flex; align-items: center; gap: 3px; margin-left: 10px; }
+  .sx-counts .c.pass { color: var(--seafoam); }
+  .sx-counts .c.warn { color: var(--brass-2); }
+  .sx-counts .c.fail { color: var(--coral); }
+  .sx-issues {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 28px;
+  }
+  .sx-empty {
+    text-align: center;
+    color: var(--mist);
+    padding: 50px 20px;
+  }
+  .sx-empty-glyph {
+    font-family: var(--mono);
+    font-size: 56px;
+    color: var(--sky);
+    opacity: 0.35;
+    margin-bottom: 14px;
+    letter-spacing: -2px;
+  }
+  .sx-empty-glyph sup { font-size: 0.55em; }
+  .sx-empty h3 { font-family: var(--display); font-size: 20px; color: var(--sail); margin-bottom: 6px; }
+  .sx-empty p  { color: var(--mist); font-size: 13px; line-height: 1.6; margin-bottom: 18px; }
+  .sx-checks-preview {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 6px 22px;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--sail-2);
+  }
+
+  .sx-issue {
+    display: flex;
+    gap: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--rope);
+    background: rgba(255,255,255,0.9);
+    transition: background 0.12s;
+  }
+  .sx-issue:hover { background: #fff; }
+  .sx-issue-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    font-weight: bold;
+  }
+  .sx-issue.pass .sx-issue-icon { background: rgba(74,149,128,0.15); color: var(--seafoam); border: 1px solid var(--seafoam); }
+  .sx-issue.warn .sx-issue-icon { background: rgba(212,169,58,0.15); color: var(--brass-2);  border: 1px solid var(--brass-2); }
+  .sx-issue.fail .sx-issue-icon { background: rgba(192,85,64,0.15);  color: var(--coral);    border: 1px solid var(--coral); }
+  .sx-issue-body { flex: 1; }
+  .sx-issue-title { font-weight: 600; font-size: 13.5px; color: var(--sail); margin-bottom: 3px; }
+  .sx-issue-desc  { font-size: 12px; color: var(--sail-2); line-height: 1.5; }
+  .sx-issue-fix {
+    font-size: 11.5px;
+    color: var(--brass-2);
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .sx-issue-fix::before { content: "→ "; font-style: normal; font-weight: 600; }
+
+  .sx-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 28px;
+    border-top: 1px solid var(--rope);
+    background: rgba(247,251,254,0.7);
+  }
+  .sx-primary-btn, .sx-secondary-btn {
+    height: 38px;
+    padding: 0 22px;
+    border-radius: 5px;
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--rope);
+    background: transparent;
+    color: var(--sail);
+    transition: background 0.12s;
+  }
+  .sx-secondary-btn:hover { background: var(--hull); }
+  .sx-primary-btn {
+    background: #2d8a4e;
+    color: #fff;
+    border-color: #236b3c;
+    font-weight: 600;
+  }
+  .sx-primary-btn:hover:not(:disabled) { background: #236b3c; }
+  .sx-primary-btn:disabled { background: var(--mist); border-color: var(--mist); cursor: not-allowed; opacity: 0.7; }
+
   /* ── Horizontal Tool Toolbar (sits below #topbar) ── */
   #tool-toolbar {
     height: 44px;
-    background: rgba(215, 232, 245, 0.24);
+    background: rgba(var(--panel-rgb), 0.24);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--rope);
@@ -256,7 +653,7 @@
     top: 12px;
     left: 12px;
     width: 232px;
-    background: rgba(215, 232, 245, 0.78);
+    background: rgba(var(--panel-rgb), 0.78);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid var(--rope);
@@ -313,7 +710,7 @@
   /* ── Left Sidebar ── */
   #sidebar-left {
     width: 172px;
-    background: rgba(215, 232, 245, 0.24);
+    background: rgba(var(--panel-rgb), 0.24);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-right: 1px solid var(--rope);
@@ -493,7 +890,7 @@
   /* ── Bottom bar — view + snap + hints ── */
   #bottom-bar {
     height: 36px;
-    background: rgba(215, 232, 245, 0.24);
+    background: rgba(var(--panel-rgb), 0.24);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-top: 1px solid var(--rope);
@@ -528,11 +925,18 @@
     font-family: var(--font);
   }
   #bottom-bar .hint kbd { margin: 0 2px; }
+  #bottom-bar .legal-links { gap: 10px; font-size: 11px; }
+  #bottom-bar .legal-links a {
+    color: var(--mist);
+    text-decoration: none;
+    transition: color 0.12s;
+  }
+  #bottom-bar .legal-links a:hover { color: var(--sky-2); }
 
   /* ── Right Sidebar ── */
   #sidebar-right {
     width: 196px;
-    background: rgba(215, 232, 245, 0.24);
+    background: rgba(var(--panel-rgb), 0.24);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-left: 1px solid var(--rope);
@@ -991,6 +1395,46 @@
     font-weight: 600;
     transform: translate(-50%, -50%) scale(1.1);
   }
+  /* Persistent post-drag state — looks clickable so user knows to type */
+  .dim-label.editable {
+    background: var(--brass);
+    color: var(--on-brass);
+    border: 2px solid var(--brass-2);
+    font-weight: 600;
+    cursor: text;
+    box-shadow: 0 2px 10px rgba(212,169,58,0.45);
+    transition: box-shadow 0.15s, transform 0.1s;
+    pointer-events: auto;
+  }
+  .dim-label.editable:hover {
+    box-shadow: 0 3px 14px rgba(212,169,58,0.6);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  .dim-label.editing {
+    padding: 1px 2px;
+    box-shadow: 0 3px 14px rgba(212,169,58,0.6);
+  }
+  .dim-label-input {
+    width: 60px;
+    height: 18px;
+    border: none;
+    background: #fffbe6;
+    color: var(--on-brass);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    padding: 0;
+    outline: none;
+    border-radius: 2px;
+    /* Strip the browser's number-input spinner so the box stays tight */
+    -moz-appearance: textfield;
+  }
+  .dim-label-input::-webkit-outer-spin-button,
+  .dim-label-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
   /* ── Rotation angle readout (during rotation drag) ── */
   #angle-readout {
@@ -1117,12 +1561,300 @@
     transition: border-color 0.12s;
   }
   .om-input:focus, .om-select:focus { border-color: var(--sky); }
+
+  /* ─── Filament picker (tiles + swatches, "coming soon" states) ─────── */
+  .om-filament {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .om-fil-tile {
+    position: relative;
+    padding: 10px 8px;
+    border: 1px solid var(--rope);
+    border-radius: 6px;
+    background: var(--ink);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.12s, transform 0.08s, box-shadow 0.15s;
+    text-align: center;
+  }
+  .om-fil-tile:hover:not(.disabled) {
+    border-color: var(--sky);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(58,126,176,0.15);
+  }
+  .om-fil-tile.selected {
+    border-color: var(--sky);
+    background: rgba(58,126,176,0.08);
+    box-shadow: 0 0 0 2px rgba(58,126,176,0.25) inset;
+  }
+  .om-fil-tile.disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    filter: grayscale(0.3);
+  }
+  .om-fil-tile.disabled:hover { border-color: var(--rope); }
+  .om-fil-swatch {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(31,56,80,0.2);
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.35);
+  }
+  .om-fil-name {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--sail);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .om-fil-soon {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass-2);
+    background: rgba(212,169,58,0.18);
+    border: 1px solid rgba(212,169,58,0.5);
+    padding: 1px 5px;
+    border-radius: 100px;
+    line-height: 1.4;
+  }
   .om-price {
     font-family: var(--display);
     font-size: 22px;
     font-weight: 600;
     color: var(--sky-2);
   }
+  /* Green pop when the total drops to $0.00 via a coupon */
+  .om-price.free {
+    color: var(--seafoam);
+    animation: freePop 0.6s cubic-bezier(.2,.9,.3,1.3);
+  }
+  @keyframes freePop {
+    0%   { transform: scale(0.8); opacity: 0.4; }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .om-row.struck .value {
+    text-decoration: line-through;
+    color: var(--mist);
+    transition: color 0.3s;
+  }
+
+  /* ─── Coupon input ─── */
+  .om-coupon-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .om-coupon-row input {
+    flex: 1;
+    height: 32px;
+    background: var(--ink);
+    border: 1px solid var(--rope);
+    border-radius: 4px;
+    padding: 0 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sail);
+    outline: none;
+    transition: border-color 0.15s, background 0.25s;
+  }
+  .om-coupon-row input:focus { border-color: var(--sky); }
+  .om-coupon-row input.valid {
+    border-color: var(--seafoam);
+    background: rgba(74,149,128,0.08);
+  }
+  .om-coupon-row input.invalid {
+    border-color: var(--coral);
+    background: rgba(192,85,64,0.06);
+  }
+  .om-coupon-status {
+    font-size: 11px;
+    margin-top: 4px;
+    min-height: 14px;
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
+  }
+  .om-coupon-status.ok  { color: var(--seafoam); }
+  .om-coupon-status.err { color: var(--coral); }
+
+  /* ─── Bambi celebration overlay — clouds rise + centered message ─── */
+  #bambi-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    pointer-events: none;
+    display: none;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(255,240,200,0.35) 0%, rgba(200,224,240,0.2) 40%, transparent 75%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  #bambi-overlay.show { display: block; opacity: 1; }
+  #bambi-overlay .bambi-cloud {
+    position: absolute;
+    bottom: -220px;
+    color: #ffffff;
+    filter: drop-shadow(0 6px 18px rgba(31,56,80,0.15));
+    animation: bambi-rise 5s cubic-bezier(.25,.6,.3,1) forwards;
+    will-change: transform, opacity;
+    opacity: 0;
+  }
+  @keyframes bambi-rise {
+    0%   { transform: translateY(0)      scale(0.85) rotate(-2deg); opacity: 0; }
+    10%  { opacity: 0.95; }
+    100% { transform: translateY(-120vh) scale(1.1)  rotate(3deg);  opacity: 0; }
+  }
+  #bambi-message {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    background: linear-gradient(135deg, #ffffff 0%, #fff5df 100%);
+    border: 2px solid var(--brass);
+    border-radius: 18px;
+    padding: 28px 38px;
+    text-align: center;
+    box-shadow: 0 30px 80px -20px rgba(31,56,80,0.35),
+                0 0 0 6px rgba(212,169,58,0.15);
+    max-width: 460px;
+    opacity: 0;
+    transition: transform 0.55s cubic-bezier(.2,.9,.3,1.4), opacity 0.4s ease;
+  }
+  #bambi-overlay.show #bambi-message {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition-delay: 0.35s;
+  }
+  #bambi-message .bambi-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: 28px;
+    color: var(--sail);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  #bambi-message .bambi-sub {
+    font-family: var(--font);
+    color: var(--sail-2);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  #bambi-message .bambi-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: var(--brass);
+    color: var(--on-brass);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+
+  /* ─── Cloud-shaped feedback textarea inside the bambi popup ─── */
+  .bambi-cloud-input {
+    position: relative;
+    margin-top: 22px;
+    padding: 26px 22px 20px;
+    background: #fbfdff;
+    /* Asymmetric elliptical corners give it a puffy, uneven cloud edge */
+    border-radius: 55px 65px 60px 70px / 70px 55px 75px 60px;
+    border: 1.5px solid rgba(58,126,176,0.28);
+    box-shadow:
+      inset 0 -3px 8px rgba(31,56,80,0.06),
+      0 6px 18px rgba(58,126,176,0.15);
+  }
+  /* Two soft "bumps" on the top edge to reinforce the cloud silhouette */
+  .bambi-cloud-input::before,
+  .bambi-cloud-input::after {
+    content: '';
+    position: absolute;
+    background: #fbfdff;
+    border: 1.5px solid rgba(58,126,176,0.28);
+    border-bottom-color: transparent;
+    z-index: -1;
+  }
+  .bambi-cloud-input::before {
+    width: 60px; height: 40px;
+    top: -22px; left: 22%;
+    border-radius: 50% 50% 40% 40% / 70% 70% 30% 30%;
+  }
+  .bambi-cloud-input::after {
+    width: 74px; height: 46px;
+    top: -26px; right: 18%;
+    border-radius: 50% 50% 40% 40% / 70% 70% 30% 30%;
+  }
+  .bambi-cloud-input textarea {
+    width: 100%;
+    min-height: 76px;
+    max-height: 160px;
+    resize: vertical;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--sail);
+    line-height: 1.5;
+    padding: 0;
+  }
+  .bambi-cloud-input textarea::placeholder {
+    color: var(--mist);
+    font-style: italic;
+  }
+  .bambi-feedback-row {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .bambi-feedback-hint {
+    font-size: 11px;
+    color: var(--mist);
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
+  }
+  .bambi-feedback-send {
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky-2) 100%);
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(58,126,176,0.3);
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .bambi-feedback-send:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(58,126,176,0.4); }
+  .bambi-feedback-send.sent {
+    background: var(--seafoam);
+    box-shadow: 0 4px 12px rgba(74,149,128,0.35);
+    pointer-events: none;
+  }
+  #bambi-message.wide {
+    max-width: 540px;
+  }
+  /* Overlay must accept clicks on the message card (not the dim backdrop),
+     since we want people to type in the textarea. */
+  #bambi-message { pointer-events: auto; }
   .om-note {
     font-size: 11px;
     color: var(--mist);
@@ -1130,6 +1862,81 @@
     margin-top: 10px;
     text-align: center;
   }
+  .om-consents {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(247,251,254,0.6);
+    border: 1px solid var(--rope);
+    border-radius: 5px;
+  }
+  .om-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 11.5px;
+    color: var(--sail);
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  .om-check:last-child { margin-bottom: 0; }
+  .om-check input {
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .om-check a { color: var(--sky-2); }
+  .om-check a:hover { text-decoration: underline; }
+
+  /* ── Cookie / consent banner (shown to all visitors until dismissed) ── */
+  #cookie-banner {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 600;
+    width: min(560px, calc(100vw - 32px));
+    background: rgba(247, 251, 254, 0.98);
+    border: 1px solid var(--rope);
+    border-radius: 8px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 40px rgba(31,56,80,0.3);
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--sail);
+    display: none;
+  }
+  #cookie-banner.show { display: block; }
+  #cookie-banner p { margin-bottom: 12px; line-height: 1.5; }
+  #cookie-banner a { color: var(--sky-2); }
+  #cookie-banner .cb-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  #cookie-banner button {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--rope);
+    background: transparent;
+    color: var(--sail);
+  }
+  #cookie-banner button.primary {
+    background: #2d8a4e;
+    border-color: #236b3c;
+    color: #fff;
+  }
+  [data-theme="dark"] #cookie-banner {
+    background: rgba(10, 20, 35, 0.95);
+    color: #e5edf5;
+    border-color: rgba(212,169,58,0.5);
+  }
+  [data-theme="dark"] #cookie-banner a { color: #7fc4e8; }
   .om-buttons {
     display: flex;
     gap: 8px;
@@ -1196,39 +2003,61 @@
     <button class="top-btn" id="btn-drop-floor" title="Drop selected to the plane">⤓ Drop</button>
   </div>
 
-  <div id="cloud-logo" aria-label="Cloud Forge">
-    <svg class="logo-icon" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="cl-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ffffff"/>
-          <stop offset="100%" stop-color="#d8e2ed"/>
-        </linearGradient>
-        <linearGradient id="gr-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f4c958"/>
-          <stop offset="100%" stop-color="#c89028"/>
-        </linearGradient>
-      </defs>
-      <!-- Gear "sun" peeking out upper-right; drawn first so cloud overlays it -->
-      <g transform="translate(47, 11)">
-        <path d="M 6.5 0 L 4.62 1.91 L 4.6 4.6 L 1.91 4.62 L 0 6.5 L -1.91 4.62 L -4.6 4.6 L -4.62 1.91 L -6.5 0 L -4.62 -1.91 L -4.6 -4.6 L -1.91 -4.62 L 0 -6.5 L 1.91 -4.62 L 4.6 -4.6 L 4.62 -1.91 Z"
-              fill="url(#gr-grad)" stroke="#8a6a1d" stroke-width="0.8" stroke-linejoin="round"/>
-        <circle r="2.4" fill="none" stroke="#8a6a1d" stroke-width="1.1"/>
+  <a id="cloud-logo" href="home.html" aria-label="Cloud Forge — back to homepage" title="Back to homepage">
+    <svg class="logo-icon" viewBox="0 0 100 64" xmlns="http://www.w3.org/2000/svg">
+      <!-- Gear peeking from top-right; drawn first so the cloud overlaps it -->
+      <g transform="translate(75, 22)">
+        <!-- 8-tooth gear, outerR=18 / innerR=14, computed CCW -->
+        <path d="M 13.73 -2.73 L 17.66 -3.51 L 17.66 3.51 L 13.73 2.73
+                 L 11.64 7.78 L 14.97 10 L 10 14.97 L 7.78 11.64
+                 L 2.73 13.73 L 3.51 17.66 L -3.51 17.66 L -2.73 13.73
+                 L -7.78 11.64 L -10 14.97 L -14.97 10 L -11.64 7.78
+                 L -13.73 2.73 L -17.66 3.51 L -17.66 -3.51 L -13.73 -2.73
+                 L -11.64 -7.78 L -14.97 -10 L -10 -14.97 L -7.78 -11.64
+                 L -2.73 -13.73 L -3.51 -17.66 L 3.51 -17.66 L 2.73 -13.73
+                 L 7.78 -11.64 L 10 -14.97 L 14.97 -10 L 11.64 -7.78 Z"
+              fill="#f5a14e" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>
+        <!-- center bore -->
+        <circle r="4" fill="#fff" stroke="#000" stroke-width="2"/>
       </g>
-      <!-- Cloud in front, partially covering gear's lower-left -->
-      <path d="M 12 33 C 2 33, 1 22, 10 21 C 8 13, 22 9, 28 16 C 30 9, 42 11, 43 16 C 52 17, 57 33, 48 33 Z"
-            fill="url(#cl-grad)" stroke="#9caab9" stroke-width="1.2" stroke-linejoin="round"/>
+      <!-- Cloud silhouette: thick black outline, white fill -->
+      <path d="M 14 52
+               C 4 52, 2 38, 12 35
+               C 12 24, 26 18, 34 26
+               C 39 18, 56 18, 61 26
+               C 70 22, 82 28, 82 38
+               C 92 39, 92 52, 82 52
+               L 14 52 Z"
+            fill="#fff" stroke="#000" stroke-width="3.4" stroke-linejoin="round"/>
     </svg>
-    <div id="cloud-logo-text">Cloud<em>Forge</em></div>
-  </div>
+  </a>
 
   <div id="topbar-right">
     <button class="top-btn" id="btn-import" title="Import STL/OBJ">⬆ Import</button>
     <span id="mode-label">SELECT</span>
+    <button class="top-btn theme-toggle" id="btn-theme" title="Toggle light / dark theme" aria-label="Toggle theme">
+      <span class="theme-icon-sun">☀</span>
+      <span class="theme-icon-moon">☾</span>
+    </button>
     <button class="top-btn accent" id="btn-export">⬇ Export STL</button>
     <button class="top-btn order-btn" id="btn-order" title="Order a print of your design">🛒 Order</button>
   </div>
 </div>
 <input id="file-input" type="file" accept=".stl,.obj">
+
+<!-- ── App tabs: Editor · Syntax³ · Parts ── -->
+<nav id="app-tabs" role="tablist">
+  <button class="app-tab active" data-tab="editor" role="tab" aria-selected="true">
+    <span class="tab-icon">◐</span> Editor
+  </button>
+  <button class="app-tab" data-tab="syntax" role="tab" aria-selected="false">
+    <span class="tab-icon">⟨/⟩³</span> Syntax<sup>3</sup>
+    <span class="tab-badge" id="syntax-tab-badge"></span>
+  </button>
+  <button class="app-tab" data-tab="parts" role="tab" aria-selected="false" disabled>
+    <span class="tab-icon">⚡</span> Parts <span class="tab-soon">soon</span>
+  </button>
+</nav>
 
 <!-- ── Horizontal Tool Toolbar (TinkerCad-style: all tools at top, icons + tooltip) ── -->
 <div id="tool-toolbar">
@@ -1457,6 +2286,91 @@
 
 </div>
 
+<!-- ── Syntax³ Print Readiness Checker (own tab) ── -->
+<section id="syntax-view" class="tab-view" role="tabpanel" aria-labelledby="syntax-tab" hidden>
+  <div class="sx-shell">
+    <header class="sx-header">
+      <div class="sx-brand">
+        <span class="sx-mark">⟨/⟩<sup>3</sup></span>
+        <div>
+          <h1>Syntax<sup>3</sup></h1>
+          <p>Pre-flight print check · catches the issues that wreck real prints</p>
+        </div>
+      </div>
+      <button id="sx-run" class="sx-run-btn">
+        <span class="sx-run-glyph">⟁</span>
+        Run Scan
+      </button>
+    </header>
+
+    <div class="sx-body">
+      <aside class="sx-left">
+        <div class="sx-section">
+          <div class="sx-section-label">Design Summary</div>
+          <div class="sx-summary" id="sx-summary">
+            <div class="sx-summary-row"><span>Objects</span><span id="sx-sum-obj">—</span></div>
+            <div class="sx-summary-row"><span>Total volume</span><span id="sx-sum-vol">—</span></div>
+            <div class="sx-summary-row"><span>Bounding box</span><span id="sx-sum-bb">—</span></div>
+            <div class="sx-summary-row"><span>Est. PLA weight</span><span id="sx-sum-wt">—</span></div>
+            <div class="sx-summary-row"><span>Est. print time</span><span id="sx-sum-tm">—</span></div>
+          </div>
+        </div>
+
+        <div class="sx-section">
+          <div class="sx-section-label">Last Scan</div>
+          <div id="sx-score" class="sx-score idle">
+            <div class="sx-score-ring"><span id="sx-score-emoji">○</span></div>
+            <div>
+              <div class="sx-score-label" id="sx-score-label">Not scanned</div>
+              <div class="sx-score-sub"  id="sx-score-sub">Click Run Scan to validate.</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="sx-right">
+        <div class="sx-issues-header">
+          <span id="sx-issues-title">Issue Report</span>
+          <span class="sx-counts" id="sx-counts"></span>
+        </div>
+        <div id="sx-issues" class="sx-issues">
+          <div class="sx-empty">
+            <div class="sx-empty-glyph">⟨/⟩<sup>3</sup></div>
+            <h3>Ready when you are</h3>
+            <p>Hit <strong>Run Scan</strong> to check your design against the rules of physical printing.<br>You'll get a pass/fail rating and a list of any issues to fix before ordering.</p>
+            <ul class="sx-checks-preview">
+              <li>✓ Watertight geometry</li>
+              <li>✓ Print bed fit (200 × 200 × 200 mm)</li>
+              <li>✓ Disconnected pieces</li>
+              <li>✓ Thin walls &lt; 1 mm</li>
+              <li>✓ Volume, weight, print-time estimate</li>
+            </ul>
+          </div>
+        </div>
+        <footer class="sx-footer">
+          <button id="sx-back" class="sx-secondary-btn">← Back to Editor</button>
+          <button id="sx-continue" class="sx-primary-btn" disabled>Continue to Order →</button>
+        </footer>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- ── Parts Marketplace (placeholder — coming soon) ── -->
+<section id="parts-view" class="tab-view" role="tabpanel" hidden>
+  <div class="sx-shell">
+    <header class="sx-header">
+      <div class="sx-brand">
+        <span class="sx-mark" style="color:#d4a93a">⚡</span>
+        <div><h1>Parts</h1><p>Coming soon — Arduinos, ESP32 boards, motors, sensors</p></div>
+      </div>
+    </header>
+    <div class="sx-body" style="display:block;padding:40px;text-align:center">
+      <p style="color:var(--mist);font-style:italic">A curated catalogue of electronics + mechanical parts so you can combine your prints with the components that make them move, light up, or talk.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ── Bottom Bar — view options + key hints, spread out ── -->
 <div id="bottom-bar">
   <div class="seg">
@@ -1483,11 +2397,48 @@
   </div>
   <div class="spacer"></div>
   <div class="seg hint">
-    <kbd>Ctrl+D</kbd> dup · <kbd>Ctrl+G</kbd> group · <kbd>Del</kbd> delete · <kbd>F</kbd> fit · <kbd>Mid/Right-drag</kbd> pan
+    <kbd>Ctrl+C</kbd> copy · <kbd>Ctrl+V</kbd> paste · <kbd>Ctrl+X</kbd> cut · <kbd>Ctrl+Z</kbd> undo · <kbd>Ctrl+G</kbd> group · <kbd>Del</kbd> delete
+  </div>
+  <div class="seg legal-links">
+    <a href="terms.html" target="_blank">Terms</a>
+    <a href="privacy.html" target="_blank">Privacy</a>
+    <a href="refunds.html" target="_blank">Refunds</a>
+    <a href="acceptable-use.html" target="_blank">AUP</a>
   </div>
 </div>
 
 <div id="toast"></div>
+
+<!-- ── Bambi coupon celebration overlay ──────────────────────────────────
+     Rendered on demand when someone enters the friends-and-family code.
+     Cloud SVGs animate upward from below the fold; the message card
+     scale-pops into the center. Escape or click to dismiss. -->
+<div id="bambi-overlay" aria-hidden="true">
+  <!-- Cloud swarm — populated by JS to randomize positions -->
+  <div id="bambi-message" class="wide" role="dialog" aria-live="polite">
+    <div class="bambi-badge">Bambi code applied</div>
+    <div class="bambi-title">Thank you for being one of the first users of CloudForge3D.</div>
+    <div class="bambi-sub" id="bambi-sub">
+      Please leave anything you feel could make the modeling experience easier.
+    </div>
+    <div class="bambi-cloud-input">
+      <textarea id="bambi-feedback" placeholder="What did you love, what was confusing, what would you add? Any thought helps." maxlength="900"></textarea>
+    </div>
+    <div class="bambi-feedback-row">
+      <span class="bambi-feedback-hint" id="bambi-feedback-hint">Feedback ships with your order.</span>
+      <button class="bambi-feedback-send" id="bambi-feedback-send" type="button">Save feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Cookie / privacy consent banner ── -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie notice">
+  <p>Cloud Forge uses cookies to remember your theme preference, keep your session signed in, and provide the editor. By using the site you accept this. See our <a href="privacy.html" target="_blank">Privacy Policy</a>.</p>
+  <div class="cb-buttons">
+    <button id="cb-essential">Essential only</button>
+    <button class="primary" id="cb-accept">Got it</button>
+  </div>
+</div>
 
 <!-- ── Order checkout modal ── -->
 <div id="order-modal">
@@ -1500,22 +2451,95 @@
     <div class="om-row"><span class="label">Volume</span><span class="value" id="om-volume">—</span></div>
     <div class="om-row"><span class="label">Est. weight (PLA)</span><span class="value" id="om-weight">—</span></div>
 
-    <label class="om-label">Material</label>
-    <select class="om-select" id="om-material">
-      <option value="pla">PLA — standard, lowest cost</option>
-      <option value="petg">PETG — tougher, water-resistant</option>
-      <option value="abs">ABS — heat-resistant</option>
-    </select>
+    <label class="om-label">Filament</label>
+    <!-- Hidden value the submit handler reads. Kept as-is so the Netlify
+         function's material validator ('pla' | 'petg' | 'abs') still works. -->
+    <input type="hidden" id="om-material" value="pla">
+    <input type="hidden" id="om-color"    value="tan">
+    <div class="om-filament" id="om-filament">
+      <!-- Only tile without .disabled is selectable. Everything else is
+           gated behind "SOON" until we bring in a real filament stock. -->
+      <div class="om-fil-tile selected"
+           data-material="pla" data-color="tan" data-color-hex="#c9a878">
+        <div class="om-fil-swatch" style="background:#c9a878"></div>
+        <div class="om-fil-name">PLA<br>Tan</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="pla" data-color="black" data-color-hex="#242a30">
+        <div class="om-fil-swatch" style="background:#242a30"></div>
+        <div class="om-fil-name">PLA<br>Black</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="pla" data-color="white" data-color-hex="#f5f2ea">
+        <div class="om-fil-swatch" style="background:#f5f2ea"></div>
+        <div class="om-fil-name">PLA<br>White</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="pla" data-color="red" data-color-hex="#c14a3a">
+        <div class="om-fil-swatch" style="background:#c14a3a"></div>
+        <div class="om-fil-name">PLA<br>Red</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="pla" data-color="blue" data-color-hex="#3a7eb0">
+        <div class="om-fil-swatch" style="background:#3a7eb0"></div>
+        <div class="om-fil-name">PLA<br>Blue</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="pla" data-color="green" data-color-hex="#4a9580">
+        <div class="om-fil-swatch" style="background:#4a9580"></div>
+        <div class="om-fil-name">PLA<br>Green</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="petg" data-color="clear" data-color-hex="#d8e6ee">
+        <div class="om-fil-swatch" style="background:linear-gradient(135deg,#e8f0f4,#c4d4de)"></div>
+        <div class="om-fil-name">PETG<br>Any</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+      <div class="om-fil-tile disabled"
+           data-material="abs" data-color="black" data-color-hex="#2a2f35">
+        <div class="om-fil-swatch" style="background:#2a2f35"></div>
+        <div class="om-fil-name">ABS<br>Any</div>
+        <div class="om-fil-soon">Soon</div>
+      </div>
+    </div>
 
     <label class="om-label">Email for order updates</label>
     <input class="om-input" id="om-email" type="email" placeholder="you@example.com" autocomplete="email">
 
     <div class="om-divider"></div>
-    <div class="om-row"><span class="label">Print</span><span class="value" id="om-print">$—</span></div>
-    <div class="om-row"><span class="label">Shipping</span><span class="value" id="om-ship">$—</span></div>
+
+    <label class="om-label">Coupon code</label>
+    <div class="om-coupon-row">
+      <input id="om-coupon" placeholder="Enter code" autocomplete="off" spellcheck="false" maxlength="24">
+    </div>
+    <div class="om-coupon-status" id="om-coupon-status"></div>
+
+    <div class="om-row" id="om-row-print"><span class="label">Print</span><span class="value" id="om-print">$—</span></div>
+    <div class="om-row" id="om-row-ship"><span class="label">Shipping</span><span class="value" id="om-ship">$—</span></div>
+    <div class="om-row" id="om-row-discount" style="display:none"><span class="label" id="om-discount-label">Discount</span><span class="value" id="om-discount" style="color:var(--seafoam)">—</span></div>
     <div class="om-row total"><span class="label">Total</span><span class="om-price" id="om-price">$—</span></div>
 
     <div class="om-note">Address &amp; payment collected on the next page (Stripe).</div>
+
+    <div class="om-consents">
+      <label class="om-check">
+        <input type="checkbox" id="om-consent-age">
+        <span>I'm 13 or older (or have parental consent).</span>
+      </label>
+      <label class="om-check">
+        <input type="checkbox" id="om-consent-content">
+        <span>This design is my original work or I have the rights to produce it, and it doesn't violate the <a href="acceptable-use.html" target="_blank">Acceptable Use Policy</a>.</span>
+      </label>
+      <label class="om-check">
+        <input type="checkbox" id="om-consent-tos">
+        <span>I agree to the <a href="terms.html" target="_blank">Terms</a>, <a href="privacy.html" target="_blank">Privacy Policy</a>, and <a href="refunds.html" target="_blank">Refund Policy</a>.</span>
+      </label>
+    </div>
 
     <div class="om-buttons">
       <button class="om-btn" id="om-cancel">Cancel</button>
@@ -1821,7 +2845,9 @@ renderer.setClearColor(0xdbeaf3);
 // HDR tone mapping — converts the wide-range EXR luminance into a clean
 // displayable image. ACESFilmic is the photographic-realistic choice.
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+// Bumped from 1.0 → 1.18 for a brighter, more "showroom" read on placed
+// shapes. ACES rolls off highlights so this doesn't blow out gold/white.
+renderer.toneMappingExposure = 1.18;
 renderer.outputEncoding = THREE.sRGBEncoding;
 viewport.appendChild(renderer.domElement);
 
@@ -1830,21 +2856,28 @@ const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
 camera.position.set(8, 6, 10);
 camera.lookAt(0, 0, 0);
 
-// Lighting — even, shadow-free illumination across the whole plane.
-// AmbientLight gives base brightness everywhere; a HemisphereLight adds
-// gentle sky-to-ground gradient so curved surfaces still read as 3D.
-// Two directional lights (no shadows) from opposite sides cancel each
-// other's shading bias, leaving the plane uniformly lit.
-const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+// Lighting — even, shadow-free illumination across the whole plane, tuned
+// for CAD readability: curved surfaces still register as 3D, but nothing
+// on the plate goes muddy in shadow. Values bumped from the original ~2.3
+// total to ~3.5 for a clearly brighter "showroom" read.
+const ambient = new THREE.AmbientLight(0xffffff, 0.9);
 scene.add(ambient);
-const hemiLight = new THREE.HemisphereLight(0xe8f0fa, 0xc8d4dc, 0.55);
+const hemiLight = new THREE.HemisphereLight(0xf0f6fc, 0xd4dee6, 0.75);
 scene.add(hemiLight);
-const dirLight = new THREE.DirectionalLight(0xfff0d8, 0.55);
+// Key light — warm, from upper front-right
+const dirLight = new THREE.DirectionalLight(0xfff2dc, 0.85);
 dirLight.position.set(20, 30, 15);
 scene.add(dirLight);
-const fillLight = new THREE.DirectionalLight(0xd8e4f0, 0.55);
+// Fill light — cool, from opposite side to cancel shadow bias
+const fillLight = new THREE.DirectionalLight(0xdce6f2, 0.7);
 fillLight.position.set(-20, 25, -15);
 scene.add(fillLight);
+// Underside bounce — soft cool light from below so parts don't have a
+// dark unread bottom (important for CAD where the underside is often the
+// mounting face you actually care about).
+const bounceLight = new THREE.DirectionalLight(0xc8d8e8, 0.3);
+bounceLight.position.set(0, -20, 0);
+scene.add(bounceLight);
 
 // ============================================================================
 // SKY WORLD — beautiful gradient skybox + procedural sun, moon, and clouds
@@ -1873,6 +2906,8 @@ const skyShader = {
     fadeWidth:    { value: 0.7 },
     bloomStrength:{ value: 0.55 },
     bloomTightness:{ value: 1.4 }, // higher = tighter bloom around sun
+    isNight:      { value: 0.0 },  // 1.0 in dark mode: enables stars + dims horizon
+    time:         { value: 0.0 },  // animates star twinkle in dark mode
   },
   vertexShader: `
     varying vec3 vWorldPosition;
@@ -1892,11 +2927,57 @@ const skyShader = {
     uniform float fadeWidth;
     uniform float bloomStrength;
     uniform float bloomTightness;
+    uniform float isNight;
+    uniform float time;
     varying vec3 vWorldPosition;
+
+    // ─── Hash → procedural stars (no geometry, runs in shader) ───
+    float hash(vec3 p) {
+      p = fract(p * vec3(443.897, 441.423, 437.195));
+      p += dot(p, p.yzx + 19.19);
+      return fract((p.x + p.y) * p.z);
+    }
+
+    // Returns the brightness of a star at this direction, or 0 if none.
+    // Uses cell-based hashing — for each grid cell on the unit sphere we
+    // either have a star or we don't, and the star has a soft falloff.
+    float starField(vec3 dir) {
+      vec3 cell = floor(dir * 80.0);     // density — higher = more stars
+      float h = hash(cell);
+      if (h < 0.985) return 0.0;          // most cells: no star
+      vec3 centerDir = (cell + 0.5) / 80.0;
+      float d = length(dir - centerDir);
+      // Star core (sharp) + halo (soft)
+      float core = smoothstep(0.012, 0.0, d);
+      // Twinkle: slow per-star intensity modulation
+      float twinkle = 0.65 + 0.35 * sin(time * 0.8 + h * 30.0);
+      return core * twinkle;
+    }
+
     void main() {
       vec3 dir = normalize(vWorldPosition);
-      float h = dir.y;
+
+      // ── NIGHT (abyss): pure dark gradient + stars, no horizon line ──
+      if (isNight > 0.5) {
+        // Subtle vertical fade: slightly less dark at horizon for depth cue,
+        // but very tight — feels like "void", not "ground meeting sky".
+        float t = smoothstep(-0.3, 0.6, dir.y);
+        vec3 nightCol = mix(horizonColor, zenithColor, t);  // both very dark
+        // Moon glow (cool, faint) where sun direction is
+        float dotMoon = max(0.0, dot(dir, normalize(sunDirection)));
+        float moon = pow(dotMoon, 80.0) * 1.5
+                   + pow(dotMoon, bloomTightness * 4.0) * bloomStrength * 0.4;
+        nightCol = mix(nightCol, sunBloomColor, moon);
+        // Stars
+        float s = starField(dir);
+        nightCol += vec3(s * 0.95, s * 0.95, s);  // slightly cool-tinted starlight
+        gl_FragColor = vec4(nightCol, 1.0);
+        return;
+      }
+
+      // ── DAY: original blue gradient + warm sun bloom ──
       vec3 col;
+      float h = dir.y;
       if (h > horizonY) {
         float t = smoothstep(horizonY, horizonY + fadeWidth, h);
         col = mix(horizonColor, zenithColor, t);
@@ -1904,7 +2985,6 @@ const skyShader = {
         float t = smoothstep(horizonY, horizonY - fadeWidth, h);
         col = mix(horizonColor, nadirColor, t);
       }
-      // Warm bloom around the sun direction
       float dotSun = max(0.0, dot(dir, normalize(sunDirection)));
       float bloom = pow(dotSun, bloomTightness) * bloomStrength;
       col = mix(col, sunBloomColor, bloom);
@@ -2424,13 +3504,17 @@ function updateSky() {
 //     the camera moves, causing the visible jitter.
 //   • Y separation is generous enough (~1 mm) that even shallow camera
 //     angles get clean depth-buffer resolution.
+// Both grids sit at EXACTLY y=0 so they read as one continuous plane.
+// Neither writes depth, and explicit renderOrder forces a stable draw
+// sequence (minor first, major on top) — that's what prevents flicker
+// when two co-planar lines occupy the same pixel.
 const minorGrid = new THREE.GridHelper(200, 200, 0xa8b8c8, 0xa8b8c8);
 minorGrid.material.transparent = true;
-minorGrid.material.opacity = 0.30;
-minorGrid.material.depthWrite = false;
-minorGrid.material.depthTest  = true;
-minorGrid.position.y = -1.0;
-minorGrid.renderOrder = -2;        // draws BEFORE 3D objects so it sits behind
+minorGrid.material.opacity     = 0.30;
+minorGrid.material.depthWrite  = false;
+minorGrid.material.depthTest   = true;
+minorGrid.position.y = 0;
+minorGrid.renderOrder = -2;
 scene.add(minorGrid);
 
 const gridHelper = new THREE.GridHelper(200, 20, 0x3d6486, 0x1d3850);
@@ -2439,7 +3523,7 @@ gridHelper.material.opacity     = 0.95;
 gridHelper.material.depthWrite  = false;
 gridHelper.material.depthTest   = true;
 gridHelper.position.y = 0;
-gridHelper.renderOrder = -1;       // draws right after minor, still before objects
+gridHelper.renderOrder = -1;
 scene.add(gridHelper);
 
 // Ground plane — visible at 35% opacity so users can see the working surface
@@ -3012,8 +4096,10 @@ function createShape(type, presetParams = null) {
   const colorHex = SHAPE_COLORS[type] || '#4f8ef7';
   const mat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(colorHex),
-    roughness: 0.45,
-    metalness: 0.15,
+    // Tinkercad-style matte: high roughness kills specular glare on flat
+    // faces so a box actually reads as a solid colored block, not a mirror.
+    roughness: 0.72,
+    metalness: 0.02,
   });
 
   const mesh = new THREE.Mesh(geo, mat);
@@ -3148,7 +4234,14 @@ renderer.domElement.addEventListener('click', e => {
 // dimensions of the geometry as well as the front.
 function addEdgeOverlay(mesh) {
   if (mesh.userData.edgeOverlay) return;
-  const edges = new THREE.EdgesGeometry(mesh.geometry, 18); // angle threshold in degrees
+  // For primitives, use a low threshold (18°) so every hard crease shows —
+  // this reads as clean because the geometry is regular. For groups (which
+  // come out of CSG boolean ops with lots of triangulation seams from
+  // coplanar splits), use a much higher threshold so only the true silhouette
+  // edges survive — otherwise the overlay looks like a mess of scribbles.
+  const isGroup = mesh.userData.type === 'group';
+  const threshold = isGroup ? 55 : 18;
+  const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
   const mat = new THREE.LineDashedMaterial({
     color: 0x1f3850,
     dashSize: 1.2,
@@ -3342,7 +4435,7 @@ gizmo.group.visible = false;
   gizmo.yArrow.parts = [yShaft, yHead]; // store sub-meshes for raycasting
   gizmo.group.add(yArrow);
 
-  // ── HTML dimension labels ──
+  // ── HTML dimension labels (clickable when in .editable state) ──
   const labelHost = document.getElementById('dim-labels');
   ['x','y','z'].forEach(ax => {
     const el = document.createElement('div');
@@ -3351,8 +4444,89 @@ gizmo.group.visible = false;
     el.style.display = 'none';
     labelHost.appendChild(el);
     gizmo.labels[ax] = el;
+
+    // Click-to-edit: when the user clicks an editable dimension label,
+    // swap its text for a numeric input so they can type an exact value.
+    el.addEventListener('click', (e) => {
+      if (!el.classList.contains('editable')) return;
+      if (el.dataset.editing) return;        // already in edit mode
+      if (!selected) return;
+      e.stopPropagation();
+      beginDimensionEdit(ax, el);
+    });
   });
 })();
+
+// ── Edit a dimension label: replace its text with a typeable input ──
+function beginDimensionEdit(axis, el) {
+  const obj = selected;
+  if (!obj || !obj.geometry) return;
+  if (!obj.geometry.boundingBox) obj.geometry.computeBoundingBox();
+  const bb = obj.geometry.boundingBox;
+  const localExtent =
+    axis === 'x' ? (bb.max.x - bb.min.x) :
+    axis === 'y' ? (bb.max.y - bb.min.y) :
+                   (bb.max.z - bb.min.z);
+  const currentDim = localExtent * Math.abs(obj.scale[axis]);
+
+  el.dataset.editing = '1';
+  el.classList.add('editing');
+  // Remember the bbox bottom Y so we can keep the object on the floor when
+  // a Y-scale edit causes the bottom to lift or sink.
+  obj.updateMatrixWorld(true);
+  const startBottomY = (new THREE.Box3().setFromObject(obj)).min.y;
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.step = '0.1';
+  input.min  = '0.01';
+  input.value = currentDim.toFixed(2);
+  input.className = 'dim-label-input';
+  el.innerHTML = '';
+  el.appendChild(input);
+  input.focus();
+  input.select();
+
+  let applied = false;
+  const apply = () => {
+    if (applied) return;
+    applied = true;
+    const v = parseFloat(input.value);
+    let newDim = currentDim;
+    if (isFinite(v) && v > 0.001 && localExtent > 0.0001) {
+      newDim = v;
+      obj.scale[axis] = newDim / localExtent;
+      // Maintain floor contact: re-align the bottom to where it was so the
+      // object doesn't suddenly punch through the plane after a Y edit.
+      obj.updateMatrixWorld(true);
+      const nowBottomY = (new THREE.Box3().setFromObject(obj)).min.y;
+      obj.position.y += (startBottomY - nowBottomY);
+      if (obj.position.y < 0 || (new THREE.Box3().setFromObject(obj)).min.y < 0) {
+        clampAboveFloor(obj);
+      }
+      updateGizmo();
+      updatePropsFromSelected();
+      pushUndo();
+    }
+    delete el.dataset.editing;
+    el.classList.remove('editing');
+    el.textContent = newDim.toFixed(2) + ' mm';
+  };
+  const cancel = () => {
+    if (applied) return;
+    applied = true;
+    delete el.dataset.editing;
+    el.classList.remove('editing');
+    el.textContent = currentDim.toFixed(2) + ' mm';
+  };
+
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter')   { ev.preventDefault(); apply();  input.blur(); }
+    if (ev.key === 'Escape')  { ev.preventDefault(); cancel(); input.blur(); }
+  });
+  input.addEventListener('blur', apply);
+  input.addEventListener('click', ev => ev.stopPropagation());
+}
 
 function showGizmo(obj) {
   if (!obj) { hideGizmo(); return; }
@@ -3367,7 +4541,12 @@ function showGizmo(obj) {
 function hideGizmo() {
   gizmo.visible = false;
   gizmo.group.visible = false;
-  ['x','y','z'].forEach(ax => { if (gizmo.labels[ax]) gizmo.labels[ax].style.display = 'none'; });
+  ['x','y','z'].forEach(ax => {
+    if (!gizmo.labels[ax]) return;
+    gizmo.labels[ax].style.display = 'none';
+    gizmo.labels[ax].classList.remove('editable');
+    delete gizmo.labels[ax].dataset.editing;
+  });
 }
 
 // Local-axis-aligned bbox half-extents (independent of scale).
@@ -3491,7 +4670,11 @@ function updateGizmo() {
   if (gizmo.yArrow) {
     const arrowBaseX = (worldBB.min.x + worldBB.max.x) / 2;
     const arrowBaseZ = (worldBB.min.z + worldBB.max.z) / 2;
-    const arrowBaseY = worldBB.max.y + Math.max(0.4, wsize.y * 0.25);
+    // Cap the offset so the Y arrow doesn't fly off-screen for very tall
+    // objects (e.g., a 300 mm cylinder used to push the arrow up to y=380).
+    // Between 3 mm and 15 mm above the object's top is always grabbable
+    // regardless of object size.
+    const arrowBaseY = worldBB.max.y + Math.min(15, Math.max(3, wsize.y * 0.15));
     gizmo.yArrow.position.set(
       arrowBaseX - sceneOffset.x,
       arrowBaseY - sceneOffset.y,
@@ -3539,7 +4722,10 @@ function updateGizmo() {
     el.style.left = scrX + 'px';
     el.style.top  = scrY + 'px';
     const v = ax === 'x' ? dimX : ax === 'y' ? dimY : dimZ;
-    el.textContent = v.toFixed(2) + ' mm';
+    // Don't clobber the input field if the user is editing this label
+    if (!el.dataset.editing) {
+      el.textContent = v.toFixed(2) + ' mm';
+    }
     el.style.opacity = (projected.z < 1) ? '1' : '0';
   });
 }
@@ -3825,16 +5011,17 @@ function applyYMoveDrag(e) {
   let dy = cur.y - s.startPointY;
   if (snapValue && snapValue > 0) dy = Math.round(dy / snapValue) * snapValue;
 
-  // Apply the same dy to every target, then floor-clamp the whole group
-  s.targets.forEach(o => { o.position.y = (s.startYs.get(o) || 0) + dy; });
-  // Compute the minimum lift across the whole selection
-  let lift = 0;
+  // Apply dy to each target and floor-clamp INDEPENDENTLY. Previously we
+  // computed one shared lift across the whole selection, which meant any
+  // object already sitting on the floor would cancel ALL downward movement
+  // for the group. Per-object clamping lets every object slide down on its
+  // own and stop at the floor when it reaches it.
   s.targets.forEach(o => {
+    o.position.y = (s.startYs.get(o) || 0) + dy;
     o.updateMatrixWorld(true);
     const bb = new THREE.Box3().setFromObject(o);
-    if (bb.min.y < 0 && -bb.min.y > lift) lift = -bb.min.y;
+    if (bb.min.y < 0) o.position.y -= bb.min.y;
   });
-  if (lift > 0) s.targets.forEach(o => { o.position.y += lift; });
 
   updatePropsFromSelected();
   updateGizmo();
@@ -3842,11 +5029,19 @@ function applyYMoveDrag(e) {
 
 function endGizmoDrag() {
   if (!gizmo.active) return;
-  // Hide and un-highlight all dimension labels when drag ends.
+  // Keep the just-scaled axis's label VISIBLE and editable so the user can
+  // click it and type an exact dimension. The other axis labels stay hidden.
+  const scaledAxis = (gizmo.active.kind === 'scale') ? gizmo.active.axis : null;
   ['x','y','z'].forEach(ax => {
     if (!gizmo.labels[ax]) return;
     gizmo.labels[ax].classList.remove('scaling');
-    gizmo.labels[ax].style.display = 'none';
+    if (ax === scaledAxis) {
+      gizmo.labels[ax].classList.add('editable');
+      gizmo.labels[ax].style.display = 'block';
+    } else {
+      gizmo.labels[ax].classList.remove('editable');
+      gizmo.labels[ax].style.display = 'none';
+    }
   });
   document.getElementById('angle-readout').style.display = 'none';
   // Hide all full-circle rotation guides
@@ -4059,22 +5254,23 @@ function buildShapeInspector(obj) {
   });
 }
 
-// Bind prop inputs — X/Z are pivot position, Y is "bottom height above floor"
+// Bind prop inputs. Direct position edits are explicit user intent, so we
+// honor whatever the user types — including negative Y (parts that sit below
+// the build plane, useful for assemblies like a robot-arm base with a
+// mounting flange that recesses into the plate).
 ['x','z'].forEach(ax => {
   document.getElementById('prop-' + ax).addEventListener('change', () => {
     if (!selected) return;
     selected.position[ax] = parseFloat(document.getElementById('prop-' + ax).value) || 0;
-    clampAboveFloor(selected);
     pushUndo();
   });
 });
 document.getElementById('prop-y').addEventListener('change', () => {
   if (!selected) return;
-  const desiredBottomY = Math.max(0, parseFloat(document.getElementById('prop-y').value) || 0);
+  const desiredBottomY = parseFloat(document.getElementById('prop-y').value) || 0;
   selected.updateMatrixWorld(true);
   const bb = new THREE.Box3().setFromObject(selected);
   selected.position.y += desiredBottomY - bb.min.y;
-  clampAboveFloor(selected);
   pushUndo();
 });
 ['sx','sy','sz'].forEach((id, i) => {
@@ -4234,6 +5430,15 @@ toolBtns.forEach(id => {
 
 // ── Delete (handles multi-selection) ──
 function deleteSelected() {
+  // Clean up any in-progress dimension-label edit input so it doesn't
+  // hang around in the viewport pointing at a deleted object.
+  ['x','y','z'].forEach(ax => {
+    const el = gizmo && gizmo.labels && gizmo.labels[ax];
+    if (!el) return;
+    delete el.dataset.editing;
+    el.classList.remove('editing','editable');
+    el.style.display = 'none';
+  });
   if (selectedSet.size > 0) {
     selectedSet.forEach(o => {
       scene.remove(o);
@@ -4308,7 +5513,7 @@ function undo() {
     } else {
       geo = buildGeometry(s.type, s.params);
     }
-    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(s.colorHex), roughness: 0.45, metalness: 0.15 });
+    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(s.colorHex), roughness: 0.72, metalness: 0.02 });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -4328,9 +5533,18 @@ document.getElementById('btn-undo').addEventListener('click', undo);
 // ── Keyboard shortcuts ──
 window.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
+  // Skip ALL editor shortcuts when the user is typing in a form field
+  const inField = ['INPUT','TEXTAREA','SELECT'].includes((e.target.tagName || '').toUpperCase())
+                  || e.target.isContentEditable;
+  if (inField) return;
+
   if (e.key === 'Delete' || e.key === 'Backspace') deleteSelected();
   if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
   if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D')) { e.preventDefault(); duplicateSelected(); }
+  // Clipboard: C copy, X cut, V paste (Cmd or Ctrl)
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) { e.preventDefault(); copySelected(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.key === 'X')) { e.preventDefault(); cutSelected(); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) { e.preventDefault(); pasteFromClipboard(); }
   if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); ungroupSelected(); }
   else if ((e.ctrlKey || e.metaKey) && (e.key === 'g' || e.key === 'G')) { e.preventDefault(); groupSelected(); }
   if (e.key === 'Escape') {
@@ -4608,7 +5822,7 @@ function duplicateSelected() {
     }
     const mat = new THREE.MeshStandardMaterial({
       color: src.material.color.clone(),
-      roughness: 0.45, metalness: 0.15
+      roughness: 0.72, metalness: 0.02
     });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
@@ -4643,6 +5857,102 @@ function duplicateSelected() {
   showToast(copies.length === 1 ? 'Duplicated' : `Duplicated ${copies.length} objects`);
 }
 document.getElementById('btn-duplicate').addEventListener('click', duplicateSelected);
+
+// ============================================================================
+// Clipboard — Ctrl/Cmd+C copy, Ctrl/Cmd+X cut, Ctrl/Cmd+V paste
+// Lives entirely in-memory (an internal clipboard, NOT the OS clipboard) so
+// you can copy from one tab session to the same tab session.
+// ============================================================================
+let cloudforgeClipboard = [];
+
+function snapshotForClipboard(src) {
+  return {
+    type:     src.userData.type,
+    name:     src.userData.name,
+    colorHex: src.userData.colorHex,
+    isHole:   !!src.userData.isHole,
+    params:   JSON.parse(JSON.stringify(src.userData.params || {})),
+    // For boolean-merged 'group' shapes, capture the raw geometry positions
+    // so we can rebuild the exact result rather than re-running CSG.
+    groupGeo: src.userData.type === 'group' ? cloneRawGeometry(src.geometry) : null,
+    position: { x: src.position.x, y: src.position.y, z: src.position.z },
+    scale:    { x: src.scale.x,    y: src.scale.y,    z: src.scale.z },
+    rotation: { x: src.rotation.x, y: src.rotation.y, z: src.rotation.z },
+  };
+}
+function cloneRawGeometry(g) {
+  if (!g || !g.attributes || !g.attributes.position) return null;
+  return {
+    positions: Array.from(g.attributes.position.array),
+    indices:   g.index ? Array.from(g.index.array) : null,
+    normals:   g.attributes.normal ? Array.from(g.attributes.normal.array) : null,
+  };
+}
+
+function copySelected() {
+  const sources = selectedSet.size > 0 ? [...selectedSet] : (selected ? [selected] : []);
+  if (sources.length === 0) { showToast('Nothing selected to copy'); return; }
+  cloudforgeClipboard = sources.map(snapshotForClipboard);
+  showToast(sources.length === 1 ? 'Copied' : `Copied ${sources.length} objects`);
+}
+
+function cutSelected() {
+  const sources = selectedSet.size > 0 ? [...selectedSet] : (selected ? [selected] : []);
+  if (sources.length === 0) { showToast('Nothing selected to cut'); return; }
+  cloudforgeClipboard = sources.map(snapshotForClipboard);
+  // Delete after copying. Reuses the existing delete logic via the button.
+  deleteSelected();
+  showToast(sources.length === 1 ? 'Cut' : `Cut ${sources.length} objects`);
+}
+
+function pasteFromClipboard() {
+  if (cloudforgeClipboard.length === 0) { showToast('Clipboard is empty'); return; }
+  // Small XZ offset so the paste isn't sitting on top of the source
+  const PASTE_OFFSET = applySnap(3) || 3;
+  const created = [];
+  cloudforgeClipboard.forEach(snap => {
+    let geo;
+    if (snap.type === 'group' && snap.groupGeo) {
+      geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(snap.groupGeo.positions, 3));
+      if (snap.groupGeo.indices) geo.setIndex(snap.groupGeo.indices);
+      if (snap.groupGeo.normals) geo.setAttribute('normal', new THREE.Float32BufferAttribute(snap.groupGeo.normals, 3));
+      else geo.computeVertexNormals();
+    } else {
+      geo = buildGeometry(snap.type, snap.params);
+    }
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(snap.colorHex || '#4f8ef7'),
+      roughness: 0.72, metalness: 0.02,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.position.set(snap.position.x + PASTE_OFFSET, snap.position.y, snap.position.z + PASTE_OFFSET);
+    mesh.scale.set(snap.scale.x, snap.scale.y, snap.scale.z);
+    mesh.rotation.set(snap.rotation.x, snap.rotation.y, snap.rotation.z);
+    objectCounter++;
+    mesh.userData = {
+      id: objectCounter,
+      type: snap.type,
+      name: `${snap.type}-${objectCounter}`,
+      colorHex: snap.colorHex,
+      isHole: !!snap.isHole,
+      params: JSON.parse(JSON.stringify(snap.params || {})),
+    };
+    if (mesh.userData.isHole) applyHoleAppearance(mesh);
+    scene.add(mesh);
+    objects.push(mesh);
+    created.push(mesh);
+  });
+  created.forEach(clampAboveFloor);
+  selectedSet.clear();
+  created.forEach(c => selectedSet.add(c));
+  selectObject(created[0], created.length > 1);
+  updateObjectList();
+  pushUndo();
+  showToast(created.length === 1 ? 'Pasted' : `Pasted ${created.length} objects`);
+}
 
 // ============================================================================
 // Align — center / edge align selected on X, Y, or Z
@@ -4743,7 +6053,7 @@ function groupSelected() {
       resultGeo.translate(-cx, -cy, -cz);
 
       const colorHex = solids[0].userData.colorHex;
-      const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(colorHex), roughness: 0.45, metalness: 0.15 });
+      const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(colorHex), roughness: 0.72, metalness: 0.02 });
       const groupMesh = new THREE.Mesh(resultGeo, mat);
       groupMesh.castShadow = true;
       groupMesh.receiveShadow = true;
@@ -4797,7 +6107,7 @@ function ungroupSelected() {
   const restored = [];
   kids.forEach(s => {
     const geo = buildGeometry(s.type, s.params);
-    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(s.colorHex), roughness: 0.45, metalness: 0.15 });
+    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(s.colorHex), roughness: 0.72, metalness: 0.02 });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -5034,7 +6344,7 @@ function finalizeImported(positions, normals, filename) {
   }
 
   const colorHex = '#22d3ee';
-  const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(colorHex), roughness: 0.5, metalness: 0.1 });
+  const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(colorHex), roughness: 0.72, metalness: 0.02 });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -5066,12 +6376,13 @@ function finalizeImported(positions, normals, filename) {
 const ORDER_API = '/.netlify/functions/order';
 
 // Pricing — MUST match the constants in netlify/functions/order.js so the
-// estimate shown to the user matches what they're charged.
+// estimate shown to the user matches what they're charged. Tuned to mirror
+// real aggregator (Craftcloud-class) print-farm rates for PLA.
 const PRICE = {
-  setup:   4.00,   // flat per-order setup
-  perCm3:  1.00,   // material + labor estimate
-  shipping:5.00,   // ground placeholder
-  min:     10.00,  // minimum print line
+  setup:    3.00,   // flat per-order setup
+  perCm3:   0.20,   // PLA material + labor at aggregator rates
+  shipping: 5.00,   // ground shipping placeholder
+  min:      6.00,   // floor so very tiny prints still cover handling
 };
 
 // Volume of all solid (non-hole) objects in cm³, using signed-tetrahedron sum
@@ -5118,14 +6429,173 @@ function openOrderModal() {
   document.getElementById('om-size').textContent   = `${size.x.toFixed(1)} × ${size.y.toFixed(1)} × ${size.z.toFixed(1)} mm`;
   document.getElementById('om-volume').textContent = `${volumeCm3.toFixed(2)} cm³`;
   document.getElementById('om-weight').textContent = `${weightG.toFixed(1)} g`;
-  document.getElementById('om-print').textContent  = `$${printPrice.toFixed(2)}`;
-  document.getElementById('om-ship').textContent   = `$${PRICE.shipping.toFixed(2)}`;
-  document.getElementById('om-price').textContent  = `$${totalPrice.toFixed(2)}`;
 
-  // Stash the computed volume for the submit handler
-  document.getElementById('om-order').dataset.volume = volumeCm3.toFixed(4);
+  // Cache the un-discounted prices so the coupon handler can re-apply them
+  // fresh each time the code changes.
+  document.getElementById('om-order').dataset.volume        = volumeCm3.toFixed(4);
+  document.getElementById('om-order').dataset.basePrintPrice = printPrice.toFixed(2);
+  document.getElementById('om-order').dataset.baseShipPrice  = PRICE.shipping.toFixed(2);
+
+  // Reset the coupon UI whenever the modal is opened fresh
+  document.getElementById('om-coupon').value = '';
+  document.getElementById('om-coupon').classList.remove('valid', 'invalid');
+  document.getElementById('om-coupon-status').textContent = '';
+  document.getElementById('om-coupon-status').className = 'om-coupon-status';
+  document.getElementById('om-order').dataset.feedback = '';
+  applyCoupon('');
 
   document.getElementById('order-modal').classList.add('show');
+}
+
+// ── Coupon logic ──────────────────────────────────────────────────────
+// Only "bambi" is honored for now (case-insensitive, trimmed). Server
+// re-validates in netlify/functions/order.js — never trust the client
+// alone for a discount.
+const VALID_COUPONS = { bambi: { pct: 100, label: 'Bambi — 100% off' } };
+const normalizeCoupon = (raw) => (raw || '').trim().toLowerCase();
+
+function applyCoupon(raw) {
+  const btn = document.getElementById('om-order');
+  const basePrint = parseFloat(btn.dataset.basePrintPrice) || 0;
+  const baseShip  = parseFloat(btn.dataset.baseShipPrice)  || 0;
+  const printRow  = document.getElementById('om-row-print');
+  const shipRow   = document.getElementById('om-row-ship');
+  const discountRow = document.getElementById('om-row-discount');
+  const priceEl   = document.getElementById('om-price');
+  const printEl   = document.getElementById('om-print');
+  const shipEl    = document.getElementById('om-ship');
+  const discountEl = document.getElementById('om-discount');
+
+  const code = normalizeCoupon(raw);
+  const coupon = VALID_COUPONS[code];
+
+  // Reset display first
+  printEl.textContent = `$${basePrint.toFixed(2)}`;
+  shipEl.textContent  = `$${baseShip.toFixed(2)}`;
+  printRow.classList.remove('struck');
+  shipRow.classList.remove('struck');
+  priceEl.classList.remove('free');
+
+  if (coupon && coupon.pct === 100) {
+    // Full 100% off — including shipping, since this is for friends and family
+    const discount = basePrint + baseShip;
+    printRow.classList.add('struck');
+    shipRow.classList.add('struck');
+    discountRow.style.display = 'flex';
+    document.getElementById('om-discount-label').textContent = 'Coupon (' + code.toUpperCase() + ')';
+    discountEl.textContent = `−$${discount.toFixed(2)}`;
+    priceEl.textContent = '$0.00';
+    priceEl.classList.add('free');
+    btn.dataset.couponCode = code;
+  } else {
+    discountRow.style.display = 'none';
+    priceEl.textContent = `$${(basePrint + baseShip).toFixed(2)}`;
+    btn.dataset.couponCode = '';
+  }
+}
+
+// Live-validate as the user types
+document.getElementById('om-coupon').addEventListener('input', (e) => {
+  const raw = e.target.value;
+  const code = normalizeCoupon(raw);
+  const statusEl = document.getElementById('om-coupon-status');
+  const input    = e.target;
+  input.classList.remove('valid', 'invalid');
+  statusEl.className = 'om-coupon-status';
+  statusEl.textContent = '';
+
+  if (!raw.trim()) {
+    applyCoupon('');
+    return;
+  }
+  if (VALID_COUPONS[code]) {
+    input.classList.add('valid');
+    statusEl.classList.add('ok');
+    statusEl.textContent = '✓ ' + VALID_COUPONS[code].label;
+    applyCoupon(code);
+    // Play the celebration exactly once per unique valid entry so it doesn't
+    // fire again on every keystroke that lands on the same code.
+    if (input.dataset.celebrated !== code) {
+      input.dataset.celebrated = code;
+      if (code === 'bambi') playBambiCelebration();
+    }
+  } else {
+    input.classList.add('invalid');
+    statusEl.classList.add('err');
+    statusEl.textContent = '✕ Not a valid code';
+    applyCoupon('');
+    input.dataset.celebrated = '';
+  }
+});
+
+// ── Bambi celebration — clouds float up, message pops in ──────────────
+function playBambiCelebration() {
+  const overlay = document.getElementById('bambi-overlay');
+  // Rebuild the cloud swarm each time so timings/positions are fresh
+  overlay.querySelectorAll('.bambi-cloud').forEach(el => el.remove());
+  const N = 14;
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement('div');
+    c.className = 'bambi-cloud';
+    const size  = 90 + Math.random() * 180;
+    const leftPct = Math.random() * 100;
+    const delay = Math.random() * 1.6;
+    const speed = 3.6 + Math.random() * 2.2;
+    c.style.left = `calc(${leftPct}% - ${size / 2}px)`;
+    c.style.width = size + 'px';
+    c.style.animationDelay    = delay + 's';
+    c.style.animationDuration = speed + 's';
+    c.innerHTML = `
+      <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+        <g fill="currentColor">
+          <ellipse cx="50" cy="60" rx="42" ry="24"/>
+          <ellipse cx="95" cy="48" rx="34" ry="28"/>
+          <ellipse cx="135" cy="55" rx="38" ry="24"/>
+          <ellipse cx="165" cy="62" rx="26" ry="18"/>
+        </g>
+      </svg>`;
+    overlay.appendChild(c);
+  }
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden', 'false');
+
+  // Focus the feedback textarea so the user can type immediately
+  const feedbackEl  = document.getElementById('bambi-feedback');
+  const sendBtn     = document.getElementById('bambi-feedback-send');
+  const hintEl      = document.getElementById('bambi-feedback-hint');
+  const msgCard     = document.getElementById('bambi-message');
+  // Restore any feedback the user may have already typed for this order
+  const stashed = document.getElementById('om-order').dataset.feedback || '';
+  feedbackEl.value = stashed;
+  sendBtn.classList.remove('sent');
+  sendBtn.textContent = 'Save feedback';
+  hintEl.textContent  = 'Feedback ships with your order.';
+  setTimeout(() => feedbackEl.focus(), 700);
+
+  // Save button — stash the feedback on the order submit button so it
+  // gets sent with the order POST, then flash confirmation.
+  const onSave = () => {
+    const text = feedbackEl.value.trim().slice(0, 900);
+    document.getElementById('om-order').dataset.feedback = text;
+    sendBtn.classList.add('sent');
+    sendBtn.textContent = text ? '✓ Saved — thank you' : '✓ Skipped';
+    hintEl.textContent = 'You can keep editing until you click Continue to payment.';
+  };
+  sendBtn.onclick = onSave;
+
+  // Dismiss on: background click (NOT card), Escape key. Also save-on-close
+  // so nobody loses their feedback by accidentally clicking the backdrop.
+  const dismiss = () => {
+    onSave();
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.removeEventListener('click', onBackdrop);
+    document.removeEventListener('keydown', keyDismiss);
+  };
+  const onBackdrop = (e) => { if (e.target === overlay) dismiss(); };
+  const keyDismiss = (e) => { if (e.key === 'Escape') dismiss(); };
+  overlay.addEventListener('click', onBackdrop);
+  document.addEventListener('keydown', keyDismiss);
 }
 
 function closeOrderModal() {
@@ -5135,6 +6605,21 @@ function closeOrderModal() {
 document.getElementById('btn-order').addEventListener('click', openOrderModal);
 document.getElementById('om-cancel').addEventListener('click', closeOrderModal);
 document.getElementById('om-close').addEventListener('click', closeOrderModal);
+
+// Filament picker — only enabled tiles (currently PLA Tan) can be selected.
+// Disabled tiles show a "SOON" badge and toast on click.
+document.getElementById('om-filament').addEventListener('click', (e) => {
+  const tile = e.target.closest('.om-fil-tile');
+  if (!tile) return;
+  if (tile.classList.contains('disabled')) {
+    showToast(`${tile.dataset.material.toUpperCase()} ${tile.dataset.color} — coming soon`);
+    return;
+  }
+  document.querySelectorAll('#om-filament .om-fil-tile').forEach(t => t.classList.remove('selected'));
+  tile.classList.add('selected');
+  document.getElementById('om-material').value = tile.dataset.material;
+  document.getElementById('om-color').value    = tile.dataset.color;
+});
 document.getElementById('order-modal').addEventListener('click', (e) => {
   // click on the dim background (not the card) to close
   if (e.target.id === 'order-modal') closeOrderModal();
@@ -5150,11 +6635,28 @@ document.getElementById('om-order').addEventListener('click', async () => {
   const btn = document.getElementById('om-order');
   const email = document.getElementById('om-email').value.trim();
   const material = document.getElementById('om-material').value;
+  const color    = document.getElementById('om-color').value;
+  const couponCode = btn.dataset.couponCode || '';
+  const feedback   = (btn.dataset.feedback || '').slice(0, 900);
   const volumeCm3 = parseFloat(btn.dataset.volume) || 0;
   if (!email || !email.includes('@')) {
     showToast('Please enter a valid email');
     return;
   }
+  // ── Legal consents must all be checked before we hand off to Stripe ──
+  const ageOK     = document.getElementById('om-consent-age').checked;
+  const contentOK = document.getElementById('om-consent-content').checked;
+  const tosOK     = document.getElementById('om-consent-tos').checked;
+  if (!ageOK)     { showToast('Confirm you are 13 or older to continue'); return; }
+  if (!contentOK) { showToast('Confirm your design complies with the Acceptable Use Policy'); return; }
+  if (!tosOK)     { showToast('Accept the Terms, Privacy, and Refund policies to continue'); return; }
+  // Generate the print-ready STL now so the fulfillment email has the file.
+  // We base64-encode so it survives JSON transport to the Netlify function.
+  const stl = buildPrintReadySTL();
+  if (!stl) { showToast('Nothing to print — add a solid first'); return; }
+  // btoa needs binary-safe input; STL is ASCII so a direct call is fine.
+  const stlBase64 = btoa(stl);
+
   const origText = btn.textContent;
   btn.textContent = 'Connecting to Stripe…';
   btn.disabled = true;
@@ -5162,7 +6664,7 @@ document.getElementById('om-order').addEventListener('click', async () => {
     const res = await fetch(ORDER_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, material, volumeCm3, designName: 'CloudForge design' }),
+      body: JSON.stringify({ email, material, color, couponCode, feedback, volumeCm3, designName: 'CloudForge design', stlBase64 }),
     });
     const data = await res.json();
     if (!res.ok || !data.checkoutUrl) {
@@ -5196,14 +6698,27 @@ document.getElementById('om-order').addEventListener('click', async () => {
 // ── STL Export ──
 document.getElementById('btn-export').addEventListener('click', exportSTL);
 
-function exportSTL() {
-  // Only export real solids (a hole that hasn't been grouped is just a marker)
+// Returns the print-ready STL string for the current scene, or null if empty.
+// Used by both the Export button and the order checkout (which attaches it to
+// the order so the manufacturer email gets the file).
+function buildPrintReadySTL() {
   const exportable = objects.filter(o => !o.userData.isHole);
-  if (exportable.length === 0) { showToast('Nothing to export — add a solid'); return; }
+  if (exportable.length === 0) return null;
+
+  // ── PRINT-READY TRANSFORM ──
+  // (1) Snap everything down so the lowest point sits at Z=0 (the build plate).
+  // (2) Convert Three.js Y-up to STL/slicer Z-up by rotating +90° around X.
+  const totalBB = new THREE.Box3();
+  exportable.forEach(o => { o.updateMatrixWorld(true); totalBB.expandByObject(o); });
+  const floorShift = new THREE.Matrix4().makeTranslation(0, -totalBB.min.y, 0);
+  const yToZUp     = new THREE.Matrix4().makeRotationX(Math.PI / 2);
+
   let stl = 'solid CloudForge\n';
   exportable.forEach(obj => {
     const geo = obj.geometry.clone();
-    geo.applyMatrix4(obj.matrixWorld);
+    geo.applyMatrix4(obj.matrixWorld);   // 1. into world (Y-up, possibly floating)
+    geo.applyMatrix4(floorShift);        // 2. drop so bottom is at y=0
+    geo.applyMatrix4(yToZUp);            // 3. rotate so y-up becomes z-up
     if (!geo.attributes.normal) geo.computeVertexNormals();
     const pos = geo.attributes.position;
     const nor = geo.attributes.normal;
@@ -5231,6 +6746,12 @@ function exportSTL() {
     }
   });
   stl += 'endsolid CloudForge\n';
+  return stl;
+}
+
+function exportSTL() {
+  const stl = buildPrintReadySTL();
+  if (!stl) { showToast('Nothing to export — add a solid'); return; }
   const blob = new Blob([stl], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -5296,6 +6817,10 @@ function animate() {
   requestAnimationFrame(animate);
   dampCamera();   // smooth-follow the camera toward its target each frame
   updateSky();    // re-center sky on camera + drift clouds before render
+  // Drive the star-twinkle in the night-sky shader
+  if (skyShader && skyShader.uniforms.time) {
+    skyShader.uniforms.time.value = performance.now() * 0.001;
+  }
   renderer.render(scene, camera);
   drawAxes();
   dodecGizmo.draw();
@@ -5320,6 +6845,592 @@ function animate() {
   }
 }
 animate();
+
+// ============================================================================
+// Syntax³ — Print Readiness Checker
+// Geometry analysis + UI for the dedicated tab. All checks run client-side
+// against the current scene's solid objects.
+// ============================================================================
+
+const Syntax3 = (function () {
+  // ─── Print-bed and material constants (configurable later via UI) ────────
+  const BED_MM   = { x: 200, y: 200, z: 200 };
+  const PLA_DENSITY     = 1.24;   // g / cm³
+  const MIN_WALL_MM     = 1.0;    // walls thinner than this warn
+  const TIME_PER_CM3_S  = 240;    // ~4 minutes per cm³ rough heuristic
+  const VERT_MERGE_EPS  = 0.001;  // 1 µm — tolerance for "same vertex"
+
+  // ─── Geometry helpers ────────────────────────────────────────────────────
+  // Merge near-duplicate vertices in a non-indexed position buffer so that
+  // adjacent triangles share vertex IDs. Returns { positions, indices }.
+  function mergeVertices(geo, eps = VERT_MERGE_EPS) {
+    // Work from a non-indexed copy so we walk triangles linearly
+    const flat = geo.index ? geo.toNonIndexed() : geo;
+    const pos = flat.attributes.position.array;
+    const vCount = pos.length / 3;
+    const map = new Map();
+    const out = [];
+    const indices = new Array(vCount);
+    const k = 1 / eps;
+    for (let i = 0; i < vCount; i++) {
+      const x = Math.round(pos[i*3]   * k);
+      const y = Math.round(pos[i*3+1] * k);
+      const z = Math.round(pos[i*3+2] * k);
+      const key = `${x}|${y}|${z}`;
+      let idx = map.get(key);
+      if (idx === undefined) {
+        idx = out.length / 3;
+        out.push(pos[i*3], pos[i*3+1], pos[i*3+2]);
+        map.set(key, idx);
+      }
+      indices[i] = idx;
+    }
+    return { positions: out, indices };
+  }
+
+  // Edge → triangle count map. We skip DEGENERATE triangles (two or more
+  // vertices at the same merged ID) — Three.js's ConeGeometry / annular
+  // ExtrudeGeometry / pyramid all generate degenerate tris at apexes and
+  // seams which would otherwise falsely flag the mesh as non-manifold.
+  // Classify edges:
+  //   • count = 1  → boundary edge (open hole — a REAL print-killer)
+  //   • count = 2  → manifold (perfect)
+  //   • count ≥ 3  → touching surfaces (slicers handle it but worth a warn)
+  function manifoldStats(indices) {
+    const edges = new Map();
+    const triCount = indices.length / 3;
+    for (let i = 0; i < triCount; i++) {
+      const a = indices[i*3], b = indices[i*3+1], c = indices[i*3+2];
+      if (a === b || b === c || a === c) continue;   // degenerate, skip
+      const pair = (u, v) => (u < v ? `${u}-${v}` : `${v}-${u}`);
+      [pair(a,b), pair(b,c), pair(c,a)].forEach(k => {
+        edges.set(k, (edges.get(k) || 0) + 1);
+      });
+    }
+    let boundary = 0, overConnected = 0;
+    edges.forEach(c => {
+      if (c === 1) boundary++;
+      else if (c >= 3) overConnected++;
+    });
+    return { boundary, overConnected, edgeCount: edges.size };
+  }
+
+  // Signed-volume sum gives positive value for closed solids (cm³).
+  function meshVolumeCm3(mesh) {
+    const g = mesh.geometry;
+    if (!g || !g.attributes.position) return 0;
+    const pos = g.attributes.position.array;
+    const idx = g.index ? g.index.array : null;
+    mesh.updateMatrixWorld(true);
+    const m = mesh.matrixWorld;
+    const v0 = new THREE.Vector3(), v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
+    const triCount = idx ? idx.length / 3 : pos.length / 9;
+    let totalMm3 = 0;
+    for (let i = 0; i < triCount; i++) {
+      const a = idx ? idx[i*3]   : i*3;
+      const b = idx ? idx[i*3+1] : i*3+1;
+      const c = idx ? idx[i*3+2] : i*3+2;
+      v0.set(pos[a*3], pos[a*3+1], pos[a*3+2]).applyMatrix4(m);
+      v1.set(pos[b*3], pos[b*3+1], pos[b*3+2]).applyMatrix4(m);
+      v2.set(pos[c*3], pos[c*3+1], pos[c*3+2]).applyMatrix4(m);
+      totalMm3 += v0.dot(v1.clone().cross(v2)) / 6;
+    }
+    return Math.abs(totalMm3) / 1000;
+  }
+
+  // Smallest world-space dimension across a solid; used as a crude
+  // thin-wall canary for v1 (real wall-thickness sampling comes later).
+  function minDimensionMm(mesh) {
+    mesh.updateMatrixWorld(true);
+    const bb = new THREE.Box3().setFromObject(mesh);
+    const s = bb.getSize(new THREE.Vector3());
+    return Math.min(s.x, s.y, s.z);
+  }
+
+  // ─── Per-mesh validators ─────────────────────────────────────────────────
+  function checkMesh(mesh) {
+    const { indices } = mergeVertices(mesh.geometry);
+    const { boundary, overConnected } = manifoldStats(indices);
+    return {
+      name: mesh.userData.name || mesh.userData.type || 'shape',
+      watertight: boundary === 0,            // open holes are the real failure
+      boundaryEdges: boundary,
+      overConnectedEdges: overConnected,     // touching surfaces — warn only
+      minDimMm: minDimensionMm(mesh),
+      volumeCm3: meshVolumeCm3(mesh),
+    };
+  }
+
+  // ─── Top-level analyzer: assembles the full report ───────────────────────
+  function analyze() {
+    const solids = objects.filter(o => !o.userData.isHole);
+    const report = { issues: [], summary: {}, ok: false };
+
+    if (solids.length === 0) {
+      report.issues.push({
+        sev: 'fail',
+        title: 'Nothing to print',
+        desc: 'Your design is empty.',
+        fix: 'Add at least one solid shape from the Shape Library before scanning.',
+      });
+      return report;
+    }
+
+    // Aggregate bounding box and volume across all solids
+    const wholeBB = new THREE.Box3();
+    let totalVolume = 0;
+    const perMesh = [];
+    solids.forEach(m => {
+      m.updateMatrixWorld(true);
+      wholeBB.expandByObject(m);
+      const r = checkMesh(m);
+      perMesh.push(r);
+      totalVolume += r.volumeCm3;
+    });
+    const size = wholeBB.getSize(new THREE.Vector3());
+    const weightG    = totalVolume * PLA_DENSITY;
+    const printTimeS = totalVolume * TIME_PER_CM3_S;
+
+    report.summary = {
+      objectCount: solids.length,
+      volumeCm3:   totalVolume,
+      sizeMm:      [size.x, size.y, size.z],
+      weightG,
+      printTimeS,
+    };
+
+    // CHECK 1 — Print bed fit
+    const fits = size.x <= BED_MM.x && size.y <= BED_MM.y && size.z <= BED_MM.z;
+    if (!fits) {
+      report.issues.push({
+        sev: 'fail',
+        title: 'Too big for the print bed',
+        desc: `Your design is ${size.x.toFixed(1)} × ${size.y.toFixed(1)} × ${size.z.toFixed(1)} mm. The print bed is ${BED_MM.x} × ${BED_MM.y} × ${BED_MM.z} mm.`,
+        fix: 'Scale the design down, split it into parts, or pick a manufacturer with a larger build volume.',
+      });
+    } else {
+      report.issues.push({
+        sev: 'pass',
+        title: 'Fits inside the print bed',
+        desc: `${size.x.toFixed(0)} × ${size.y.toFixed(0)} × ${size.z.toFixed(0)} mm — comfortably within the 200 mm³ build volume.`,
+      });
+    }
+
+    // CHECK 2 — Watertight per object (open holes = fail, touching = warn)
+    const holey      = perMesh.filter(m => m.boundaryEdges > 0);
+    const overConn   = perMesh.filter(m => m.boundaryEdges === 0 && m.overConnectedEdges > 0);
+    if (holey.length > 0) {
+      report.issues.push({
+        sev: 'fail',
+        title: `${holey.length} shape${holey.length>1?'s have':' has'} open holes`,
+        desc: `Slicers need a fully closed mesh to know inside vs outside. ${holey.map(b => b.name + ' (' + b.boundaryEdges + ' open edge' + (b.boundaryEdges>1?'s':'') + ')').join(', ')}.`,
+        fix: 'Try grouping this shape with another so the boolean operation closes the gap — or rebuild it from a fresh primitive.',
+      });
+    } else if (overConn.length > 0) {
+      report.issues.push({
+        sev: 'warn',
+        title: `${overConn.length} shape${overConn.length>1?'s have':' has'} touching internal surfaces`,
+        desc: `${overConn.map(b => b.name).join(', ')} — adjacent pieces are joined edge-to-edge instead of merged. Slicers usually handle it, but it can produce visible seams.`,
+        fix: 'Click Group (⊕) on these shapes to fuse them into a single solid.',
+      });
+    } else {
+      report.issues.push({
+        sev: 'pass',
+        title: 'All shapes are watertight',
+        desc: `Every solid is a properly closed mesh — the slicer will interpret it correctly.`,
+      });
+    }
+
+    // CHECK 3 — Disconnected (ungrouped) shapes
+    if (solids.length > 1) {
+      report.issues.push({
+        sev: 'warn',
+        title: `${solids.length} separate shapes`,
+        desc: `Your design has ${solids.length} unmerged shapes. Print services will accept this, but you'll pay full setup cost per piece, and any shapes that aren't touching could come apart in shipping.`,
+        fix: 'Select all shapes and click Group (⊕) so they print as one piece.',
+      });
+    } else {
+      report.issues.push({
+        sev: 'pass',
+        title: 'Single connected solid',
+        desc: 'Your design is one merged piece — clean to slice and economical to print.',
+      });
+    }
+
+    // CHECK 4 — Thin walls (v1 = smallest dimension heuristic)
+    const thin = perMesh.filter(m => m.minDimMm < MIN_WALL_MM);
+    if (thin.length > 0) {
+      report.issues.push({
+        sev: 'warn',
+        title: `Thin features detected (< ${MIN_WALL_MM} mm)`,
+        desc: `${thin.length} shape${thin.length>1?'s have':' has'} a dimension under ${MIN_WALL_MM} mm: ${thin.map(t => t.name + ' (' + t.minDimMm.toFixed(2) + ' mm)').join(', ')}. Plastic features this thin tend to warp or shatter.`,
+        fix: 'Scale that shape up, or thicken it by adding another shape on top and grouping.',
+      });
+    } else {
+      report.issues.push({
+        sev: 'pass',
+        title: 'No thin walls',
+        desc: `Every shape has at least ${MIN_WALL_MM} mm in its smallest dimension — strong enough to print.`,
+      });
+    }
+
+    // CHECK 5 — Volume sanity (tiny / huge models often look wrong)
+    if (totalVolume < 0.5) {
+      report.issues.push({
+        sev: 'warn',
+        title: 'Very small total volume',
+        desc: `Only ${totalVolume.toFixed(3)} cm³. Could be correct for jewelry, but most prints are bigger.`,
+        fix: 'Double-check you scaled it correctly — a 1 mm box vs a 10 mm box looks similar on screen.',
+      });
+    }
+
+    // Compute overall verdict
+    const fails = report.issues.filter(i => i.sev === 'fail').length;
+    const warns = report.issues.filter(i => i.sev === 'warn').length;
+    report.ok       = fails === 0;
+    report.fails    = fails;
+    report.warns    = warns;
+    report.passes   = report.issues.filter(i => i.sev === 'pass').length;
+    return report;
+  }
+
+  // ─── UI: live summary panel (updates whenever the scene changes) ─────────
+  function refreshSummary() {
+    const solids = objects.filter(o => !o.userData.isHole);
+    let vol = 0;
+    const bb = new THREE.Box3();
+    solids.forEach(m => {
+      m.updateMatrixWorld(true);
+      bb.expandByObject(m);
+      vol += meshVolumeCm3(m);
+    });
+    const sz = solids.length ? bb.getSize(new THREE.Vector3()) : new THREE.Vector3();
+    const fmt = (n) => isFinite(n) ? n.toFixed(2) : '—';
+    document.getElementById('sx-sum-obj').textContent = String(solids.length);
+    document.getElementById('sx-sum-vol').textContent = solids.length ? `${fmt(vol)} cm³` : '—';
+    document.getElementById('sx-sum-bb').textContent  = solids.length
+      ? `${sz.x.toFixed(1)} × ${sz.y.toFixed(1)} × ${sz.z.toFixed(1)} mm`
+      : '—';
+    document.getElementById('sx-sum-wt').textContent = solids.length ? `${(vol * PLA_DENSITY).toFixed(2)} g` : '—';
+    const t = vol * TIME_PER_CM3_S;
+    if (!solids.length) {
+      document.getElementById('sx-sum-tm').textContent = '—';
+    } else {
+      const m = Math.floor(t / 60), s = Math.round(t % 60);
+      document.getElementById('sx-sum-tm').textContent = m ? `${m} min ${s} s` : `${s} s`;
+    }
+  }
+
+  // ─── UI: run scan + render report ────────────────────────────────────────
+  function runScan() {
+    const btn = document.getElementById('sx-run');
+    btn.disabled = true;
+    btn.classList.add('scanning');
+    btn.firstElementChild.textContent = '◌';
+
+    // Defer the heavy work so the spinner paints first
+    setTimeout(() => {
+      let report;
+      try { report = analyze(); }
+      catch (e) {
+        report = { issues: [{ sev: 'fail', title: 'Scanner crashed', desc: e.message, fix: 'Try simplifying the design and scanning again.' }], ok: false, fails: 1, warns: 0, passes: 0 };
+      }
+      renderReport(report);
+      btn.disabled = false;
+      btn.classList.remove('scanning');
+      btn.firstElementChild.textContent = '⟁';
+      // Update the Editor → Syntax tab badge
+      updateTabBadge(report);
+      // Toggle the Continue → Order button
+      document.getElementById('sx-continue').disabled = !report.ok;
+    }, 60);
+  }
+
+  function renderReport(report) {
+    const host = document.getElementById('sx-issues');
+    host.innerHTML = '';
+    const icons = { pass: '✓', warn: '!', fail: '✕' };
+    report.issues.forEach(issue => {
+      const el = document.createElement('div');
+      el.className = 'sx-issue ' + issue.sev;
+      el.innerHTML = `
+        <div class="sx-issue-icon">${icons[issue.sev]}</div>
+        <div class="sx-issue-body">
+          <div class="sx-issue-title">${issue.title}</div>
+          <div class="sx-issue-desc">${issue.desc}</div>
+          ${issue.fix ? `<div class="sx-issue-fix">${issue.fix}</div>` : ''}
+        </div>`;
+      host.appendChild(el);
+    });
+
+    // Counts header
+    const counts = document.getElementById('sx-counts');
+    counts.innerHTML = `
+      <span class="c pass">✓ ${report.passes || 0}</span>
+      <span class="c warn">! ${report.warns || 0}</span>
+      <span class="c fail">✕ ${report.fails || 0}</span>`;
+
+    // Overall verdict tile
+    const score = document.getElementById('sx-score');
+    score.classList.remove('idle','pass','warn','fail');
+    const emoji = document.getElementById('sx-score-emoji');
+    const label = document.getElementById('sx-score-label');
+    const sub   = document.getElementById('sx-score-sub');
+    if (report.fails > 0) {
+      score.classList.add('fail');
+      emoji.textContent = '✕';
+      label.textContent = 'Not Ready';
+      sub.textContent   = `${report.fails} blocking issue${report.fails>1?'s':''}. Fix to continue.`;
+    } else if (report.warns > 0) {
+      score.classList.add('warn');
+      emoji.textContent = '!';
+      label.textContent = 'Print With Warnings';
+      sub.textContent   = `${report.warns} non-blocking issue${report.warns>1?'s':''}. Review before ordering.`;
+    } else {
+      score.classList.add('pass');
+      emoji.textContent = '✓';
+      label.textContent = 'Print Ready';
+      sub.textContent   = 'All checks passed. Ready for fabrication.';
+    }
+  }
+
+  function updateTabBadge(report) {
+    const badge = document.getElementById('syntax-tab-badge');
+    badge.classList.remove('show','pass','warn','fail');
+    if (!report) return;
+    if (report.fails > 0)      { badge.classList.add('show','fail'); badge.textContent = report.fails; }
+    else if (report.warns > 0) { badge.classList.add('show','warn'); badge.textContent = report.warns; }
+    else                       { badge.classList.add('show','pass'); badge.textContent = '✓'; }
+  }
+
+  // ─── Tab navigation ──────────────────────────────────────────────────────
+  function setTab(name) {
+    document.body.classList.remove('tab-editor','tab-syntax','tab-parts');
+    document.body.classList.add('tab-' + name);
+    document.querySelectorAll('.app-tab').forEach(b => {
+      const on = b.dataset.tab === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on);
+    });
+    // Toggle hidden attribute for the views
+    document.getElementById('syntax-view').hidden = (name !== 'syntax');
+    document.getElementById('parts-view').hidden  = (name !== 'parts');
+    // When switching INTO the syntax tab, refresh the live summary
+    if (name === 'syntax') {
+      refreshSummary();
+      // Auto-run a scan when the user enters the tab so the Continue button
+      // isn't stuck disabled for an obviously-valid design.
+      if (objects.filter(o => !o.userData.isHole).length > 0) {
+        setTimeout(runScan, 80);
+      }
+    }
+    // When leaving, reset the order-blocker state — the user can re-scan
+    if (name === 'editor') document.getElementById('sx-continue').disabled = true;
+  }
+
+  // ─── Wire up DOM events ──────────────────────────────────────────────────
+  function init() {
+    document.body.classList.add('tab-editor');
+    document.querySelectorAll('.app-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        setTab(btn.dataset.tab);
+      });
+    });
+    document.getElementById('sx-run').addEventListener('click', runScan);
+    document.getElementById('sx-back').addEventListener('click', () => setTab('editor'));
+    document.getElementById('sx-continue').addEventListener('click', () => {
+      // Hand off to the existing order flow
+      setTab('editor');
+      setTimeout(openOrderModal, 50);
+    });
+  }
+
+  return { init, setTab, analyze, refreshSummary };
+})();
+
+Syntax3.init();
+
+// ============================================================================
+// Theme system — light/dark mode with day/night sky swap
+// ============================================================================
+const Theme = (function () {
+  const KEY = 'cloudforge-theme';
+
+  // Day & night sky HDRIs (PolyHaven CC0). Local sky.exr stays as a fallback
+  // for the day theme only.
+  const SKY_URLS = {
+    light: [
+      'https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/kloppenheim_06_puresky_1k.exr',
+      'sky.exr'
+    ],
+    // User's custom night sky. While it streams in, the procedural night
+    // shader with stars shows as a placeholder.
+    dark: [
+      'night_sky.exr'
+    ]
+  };
+
+  // Procedural sky shader colors per theme — visible briefly before the
+  // EXR loads, AND as the permanent fallback if the EXR fails.
+  const PROCEDURAL = {
+    light: {
+      zenith:    new THREE.Color('#3a7eb8'),
+      horizon:   new THREE.Color('#cfdfeb'),
+      nadir:     new THREE.Color('#7fb0d8'),
+      sunBloom:  new THREE.Color('#ffe6b0'),
+      bloomStrength: 0.55,
+      clearColor: 0xdbeaf3,
+      groundOpacity: 0.35,
+      groundColor: 0xf1f7fc,
+      gridMajor: 0x1d3850, gridMajorCenter: 0x3d6486, majorOpacity: 0.95,
+      gridMinor: 0xa8b8c8, minorOpacity: 0.30,
+      isNight: 0.0,
+    },
+    dark: {
+      zenith:    new THREE.Color('#02050d'),   // near-black at top of abyss
+      horizon:   new THREE.Color('#070c1a'),   // very slightly lifted (depth cue)
+      nadir:     new THREE.Color('#010306'),
+      sunBloom:  new THREE.Color('#c8d8f0'),   // cool moon color
+      bloomStrength: 0.35,
+      clearColor: 0x02050d,
+      // Ground basically invisible in dark mode — you're floating in stars
+      groundOpacity: 0.0,
+      groundColor: 0x000000,
+      // Grid stands out as the only thing in the abyss → make it luminous
+      gridMajor: 0x7eb4d8, gridMajorCenter: 0xbcd4ec, majorOpacity: 0.7,
+      gridMinor: 0x4060a0, minorOpacity: 0.35,
+      // Tell the shader: enable starfield + night mode
+      isNight: 1.0,
+    }
+  };
+
+  // Helper: replace the vertex-colors on a GridHelper since they're baked in
+  // at construction. We rebuild the geometry colors attribute to the new hue.
+  function repaintGrid(grid, color) {
+    if (!grid || !grid.geometry || !grid.geometry.attributes.color) return;
+    const c = new THREE.Color(color);
+    const arr = grid.geometry.attributes.color.array;
+    for (let i = 0; i < arr.length; i += 3) {
+      arr[i] = c.r; arr[i+1] = c.g; arr[i+2] = c.b;
+    }
+    grid.geometry.attributes.color.needsUpdate = true;
+  }
+
+  function applyProcedural(name) {
+    const p = PROCEDURAL[name];
+    if (!p || !skyShader) return;
+    skyShader.uniforms.zenithColor.value.copy(p.zenith);
+    skyShader.uniforms.horizonColor.value.copy(p.horizon);
+    skyShader.uniforms.nadirColor.value.copy(p.nadir);
+    skyShader.uniforms.sunBloomColor.value.copy(p.sunBloom);
+    skyShader.uniforms.bloomStrength.value = p.bloomStrength;
+    skyShader.uniforms.isNight.value = p.isNight || 0.0;
+    if (typeof renderer !== 'undefined') renderer.setClearColor(p.clearColor);
+    if (typeof ground !== 'undefined') {
+      ground.material.color.setHex(p.groundColor);
+      ground.material.opacity = p.groundOpacity;
+      ground.material.needsUpdate = true;
+    }
+    if (typeof gridHelper !== 'undefined') {
+      repaintGrid(gridHelper, p.gridMajor);
+      gridHelper.material.opacity = p.majorOpacity;
+    }
+    if (typeof minorGrid !== 'undefined') {
+      repaintGrid(minorGrid, p.gridMinor);
+      minorGrid.material.opacity = p.minorOpacity;
+    }
+  }
+
+  // Re-fetch the EXR for the active theme. Reuses the same loader chain as
+  // the original sky boot — fallback URLs are tried in order until one
+  // succeeds, or we keep the procedural sky.
+  function loadSkyForTheme(name) {
+    // Clear the current scene background. For LIGHT mode the procedural sky
+    // shows as a placeholder while the EXR streams in. For DARK mode we keep
+    // the procedural sky HIDDEN so the user sees a clean blank dark canvas
+    // (the renderer's clear color) instead of the lower-quality star shader
+    // for the brief moment before the EXR is ready.
+    scene.background = null;
+    scene.environment = null;
+    if (typeof skyGroup !== 'undefined') {
+      skyGroup.visible = (name !== 'dark');
+    }
+
+    if (typeof THREE.EXRLoader === 'undefined') return;
+    const urls = SKY_URLS[name];
+    if (!urls || !urls.length) return;   // night mode: stay procedural
+
+    const exrLoader = new THREE.EXRLoader();
+    exrLoader.setDataType(THREE.HalfFloatType);
+    let i = 0;
+    const tryNext = () => {
+      if (i >= urls.length) return;
+      const url = urls[i++];
+      try {
+        exrLoader.load(url, (tex) => {
+          // Only apply if user is still on this theme (could have switched mid-load)
+          if (document.documentElement.getAttribute('data-theme') !== name) return;
+          tex.mapping = THREE.EquirectangularReflectionMapping;
+          const pmrem = new THREE.PMREMGenerator(renderer);
+          pmrem.compileEquirectangularShader();
+          scene.environment = pmrem.fromEquirectangular(tex).texture;
+          scene.background = tex;
+          pmrem.dispose();
+          if (typeof skyGroup !== 'undefined') skyGroup.visible = false;
+        }, undefined, () => { tryNext(); });
+      } catch (e) { tryNext(); }
+    };
+    tryNext();
+  }
+
+  function set(name) {
+    if (name !== 'light' && name !== 'dark') name = 'light';
+    document.documentElement.setAttribute('data-theme', name);
+    try { localStorage.setItem(KEY, name); } catch (e) {}
+    applyProcedural(name);
+    loadSkyForTheme(name);
+    document.getElementById('btn-theme')?.setAttribute('title',
+      name === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  function toggle() {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    set(cur === 'dark' ? 'light' : 'dark');
+  }
+
+  function init() {
+    let saved = 'light';
+    try { saved = localStorage.getItem(KEY) || 'light'; } catch (e) {}
+    set(saved);
+    document.getElementById('btn-theme')?.addEventListener('click', toggle);
+  }
+
+  return { init, set, toggle };
+})();
+
+Theme.init();
+
+// ============================================================================
+// Cookie / privacy consent banner
+// Shown on first visit until the user clicks one of the two buttons.
+// Choice is stored in localStorage so it doesn't reappear every session.
+// ============================================================================
+(function cookieBanner() {
+  const KEY = 'cf-consent-v1';
+  const banner = document.getElementById('cookie-banner');
+  if (!banner) return;
+  let stored;
+  try { stored = localStorage.getItem(KEY); } catch (e) { /* private mode */ }
+  if (!stored) banner.classList.add('show');
+
+  function record(choice) {
+    try { localStorage.setItem(KEY, JSON.stringify({ choice, t: Date.now() })); } catch (e) {}
+    banner.classList.remove('show');
+  }
+  document.getElementById('cb-accept').addEventListener('click',    () => record('accepted'));
+  document.getElementById('cb-essential').addEventListener('click', () => record('essential'));
+})();
 
 // ── Initial state ──
 pushUndo();

@@ -1,0 +1,17 @@
+# Node dependencies — Netlify rebuilds these on deploy from package.json
+node_modules/
+
+# Environment / secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Netlify build artifacts
+.netlify/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
